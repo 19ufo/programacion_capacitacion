@@ -4,71 +4,91 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calendario Operativo & Disponibilidad Colombia — Panorama Sep a Dic</title>
-  <meta name="description" content="Calendario interactivo con vista mensual y panorama cuatrimestral (Sep - Dic) para programar días habilitados, bloqueados, capacitaciones y festivos en Colombia." />
+  <meta name="description" content="Calendario ejecutivo de disponibilidad, bloqueos, capacitaciones y festivos de Colombia. Panorama cuatrimestral interactivo con diseño contemporáneo 2026." />
 
-  <!-- Tipografías Modernas de Google Fonts -->
+  <!-- Tipografías de Alta Gama (Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- SheetJS para exportación a Excel -->
+  <!-- SheetJS para exportación profesional a Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     /* ==========================================================================
-       VARIABLES Y TEMA DE DISEÑO (MINIMALISTA, MODERNO & ELEGANTE 2026)
+       SISTEMA DE DISEÑO DE ALTA GAMA 2026 (APPLE / LINEAR / NOTION CALENDAR)
        ========================================================================== */
     :root {
-      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-      --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-text: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
-      --bg-page: #f8fafc;
-      --bg-surface: #ffffff;
-      --border-color: #e2e8f0;
-      --border-light: #f1f5f9;
+      /* Fondo y Lienzo */
+      --bg-canvas: #f8fafc;
+      --bg-surface: rgba(255, 255, 255, 0.92);
+      --bg-surface-solid: #ffffff;
+      --bg-subtle: #f1f5f9;
 
+      /* Bordes */
+      --border-light: rgba(226, 232, 240, 0.85);
+      --border-hover: #cbd5e1;
+      --border-strong: #94a3b8;
+
+      /* Tipografía */
       --text-main: #0f172a;
-      --text-muted: #64748b;
-      --text-light: #94a3b8;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --text-inverse: #ffffff;
 
-      /* Estado Habilitado (Verde Esmeralda Pastel) */
+      /* PALETA DE ESTADOS DE ALTA DEFINICIÓN (PASTELES SUAVES & ELEGANTES) */
+      /* 🟢 Habilitado (Menta Esmeralda Soft) */
       --hab-bg: #ecfdf5;
       --hab-border: #a7f3d0;
       --hab-text: #065f46;
       --hab-dot: #10b981;
-      --hab-badge: #d1fae5;
+      --hab-chip: #d1fae5;
 
-      /* Estado Bloqueado (Rosa / Coral Pastel) */
+      /* 🔴 Bloqueado (Coral Rosa Soft) */
       --bloq-bg: #fff1f2;
       --bloq-border: #fecdd3;
       --bloq-text: #9f1239;
       --bloq-dot: #f43f5e;
-      --bloq-badge: #ffe4e6;
+      --bloq-chip: #ffe4e6;
 
-      /* Estado Capacitación (Violeta / Púrpura Pastel) */
+      /* 🟣 Capacitación (Iris Lavanda Soft) */
       --cap-bg: #f5f3ff;
       --cap-border: #ddd6fe;
       --cap-text: #5b21b6;
       --cap-dot: #8b5cf6;
-      --cap-badge: #ede9fe;
+      --cap-chip: #ede9fe;
 
-      /* Festivos de Colombia (Ámbar / Naranja Pastel) */
+      /* 🟠 Compensatorio (Melocotón Dorado Soft) */
+      --comp-bg: #fff7ed;
+      --comp-border: #fed7aa;
+      --comp-text: #9a3412;
+      --comp-dot: #f97316;
+      --comp-chip: #ffedd5;
+
+      /* 🇨🇴 Festivos Oficiales Colombia (Vainilla Champagne Soft) */
       --fest-bg: #fffbeb;
-      --fest-border: #fde68a;
-      --fest-text: #92400e;
-      --fest-dot: #f59e0b;
-      --fest-badge: #fef3c7;
+      --fest-border: #fef08a;
+      --fest-text: #854d0e;
+      --fest-dot: #eab308;
+      --fest-chip: #fef9c3;
 
-      /* Fin de Semana */
-      --weekend-bg: #f8fafc;
-      --weekend-text: #94a3b8;
+      /* Fin de semana */
+      --wknd-bg: #fbfcfe;
 
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+      /* Sombras y Radios */
+      --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04);
+      --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.02);
+      --shadow-elevated: 0 16px 36px -4px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.03);
+      --shadow-dock: 0 8px 30px rgba(0, 0, 0, 0.06);
+
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-pill: 9999px;
     }
 
     * {
@@ -78,464 +98,476 @@
     }
 
     body {
-      font-family: var(--font-body);
-      background-color: var(--bg-page);
+      font-family: var(--font-text);
+      background-color: var(--bg-canvas);
       background-image: 
-        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.02) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.025) 0%, transparent 40%);
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 45%),
+        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.04) 0px, transparent 45%),
+        radial-gradient(at 50% 100%, rgba(249, 115, 22, 0.03) 0px, transparent 50%);
+      background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      line-height: 1.45;
       -webkit-font-smoothing: antialiased;
+      line-height: 1.4;
       padding-bottom: 40px;
     }
 
-    /* CONTENEDOR PRINCIPAL */
-    .app-container {
-      width: 100%;
-      max-width: 1320px;
-      margin: 0 auto;
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    /* Scrollbars elegantes */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: var(--radius-pill);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
 
-    /* CABECERA PRINCIPAL */
-    .header-panel {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
+    /* CONTENEDOR PRINCIPAL FLUIDO */
+    .app-wrapper {
+      max-width: 1540px;
+      margin: 0 auto;
       padding: 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ==========================================================================
+       1. CABECERA FLOTANTE EJECUTIVA (NAVBAR)
+       ========================================================================== */
+    .top-navbar {
+      background: var(--bg-surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 8px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
       gap: 12px;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-card);
+      flex-wrap: wrap;
     }
 
-    .brand-section {
+    .brand-cluster {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .brand-logo {
+    .brand-icon-logo {
       width: 38px;
       height: 38px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 19px;
-      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.22);
+      color: #ffffff;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      flex-shrink: 0;
     }
 
-    .brand-info h1 {
-      font-family: var(--font-heading);
-      font-size: 17px;
+    .brand-headlines h1 {
+      font-family: var(--font-display);
+      font-size: 16px;
       font-weight: 800;
       color: var(--text-main);
-      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+      letter-spacing: -0.02em;
     }
 
-    .brand-info p {
-      font-size: 11.5px;
+    .brand-headlines p {
+      font-size: 11px;
       color: var(--text-muted);
       font-weight: 500;
     }
 
-    .flag-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: #f1f5f9;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    /* SELECTOR DE TIPO DE VISTA (MENSUAL vs PANORAMA 4 MESES) */
-    .view-switch-container {
-      display: inline-flex;
-      background: #f1f5f9;
-      padding: 3px;
-      border-radius: 10px;
-      gap: 3px;
-      border: 1px solid var(--border-color);
-    }
-
-    .btn-view-tab {
-      border: none;
-      background: transparent;
-      padding: 6px 13px;
-      border-radius: 7px;
-      font-family: var(--font-heading);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
+    .country-tag {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: all 0.15s ease;
-      white-space: nowrap;
+      padding: 2px 7px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-pill);
+      font-size: 10px;
+      font-weight: 700;
+      color: #334155;
     }
 
-    .btn-view-tab:hover {
-      color: var(--text-main);
+    .col-flag {
+      display: inline-block;
+      width: 12px;
+      height: 8px;
+      border-radius: 1px;
+      background: linear-gradient(to bottom, #ffcd00 0%, #ffcd00 50%, #003087 50%, #003087 75%, #c8102e 75%, #c8102e 100%);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
-    .btn-view-tab.active {
-      background: white;
-      color: var(--text-main);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    /* SELECTOR DE VISTA SEGMENTADO (PILL TOGGLE) */
+    .view-segment-control {
+      display: inline-flex;
+      align-items: center;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid #e2e8f0;
+      gap: 3px;
     }
 
-    /* NAVEGACIÓN DE FECHAS (MES Y AÑO) */
-    .nav-date-group {
-      display: flex;
+    .view-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 9px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #f8fafc;
-      padding: 3px 6px;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
+      transition: all 0.16s ease;
     }
 
-    .btn-nav-arrow {
-      background: white;
-      border: 1px solid var(--border-color);
+    .view-btn:hover {
       color: var(--text-main);
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
+    }
+
+    .view-btn.active {
+      background: #ffffff;
+      color: var(--text-main);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    /* NAVEGADOR DE AÑO / MES */
+    .date-nav-capsule {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 3px 6px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .btn-nav-step {
+      background: transparent;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      color: var(--text-secondary);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
-      font-weight: bold;
-      transition: all 0.15s ease;
-      box-shadow: var(--shadow-sm);
+      font-size: 13px;
+      font-weight: 800;
+      transition: all 0.12s ease;
     }
 
-    .btn-nav-arrow:hover {
+    .btn-nav-step:hover {
       background: #f1f5f9;
-      border-color: #cbd5e1;
+      color: var(--text-main);
     }
 
-    .select-clean {
-      background: transparent;
+    .select-dropdown-clean {
       border: none;
-      font-family: var(--font-heading);
-      font-size: 14px;
-      font-weight: 700;
+      background: transparent;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
       color: var(--text-main);
-      padding: 3px 6px;
       cursor: pointer;
       outline: none;
+      padding: 0 4px;
     }
 
-    /* BOTONES DE ACCIÓN */
-    .header-actions {
+    /* BOTONES DE ACCIÓN PRINCIPALES */
+    .nav-actions-group {
       display: flex;
       align-items: center;
       gap: 7px;
       flex-wrap: wrap;
     }
 
-    .btn-action {
-      font-family: var(--font-body);
+    .btn-nav-action {
+      font-family: var(--font-display);
       font-size: 12px;
-      font-weight: 600;
-      padding: 6px 12px;
+      font-weight: 700;
+      padding: 6px 13px;
       border-radius: var(--radius-sm);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       transition: all 0.15s ease;
       border: 1px solid transparent;
-      text-decoration: none;
+      user-select: none;
     }
 
-    .btn-share {
-      background: #0f172a;
-      color: white;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn-share:hover {
-      background: #1e293b;
+    .btn-nav-action:hover {
       transform: translateY(-1px);
     }
 
-    .btn-secondary {
-      background: white;
-      border-color: var(--border-color);
+    .btn-share-primary {
+      background: #0f172a;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+    }
+
+    .btn-share-primary:hover {
+      background: #1e293b;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+    }
+
+    .btn-excel-export {
+      background: #ffffff;
+      border-color: #d1fae5;
+      color: #065f46;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .btn-excel-export:hover {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+
+    .btn-reset-clean {
+      background: #ffffff;
+      border-color: var(--border-light);
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .btn-reset-clean:hover {
+      background: #f8fafc;
       color: var(--text-main);
     }
 
-    .btn-secondary:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-    }
-
-    /* BARRA DE HERRAMIENTAS & MODO DE CLIC */
-    .toolbar-modes {
+    /* ==========================================================================
+       2. ISLA DE HERRAMIENTAS & MODOS DE MARCADO (DOCK ELEGANTE)
+       ========================================================================== */
+    .control-dock {
       background: var(--bg-surface);
-      border: 1px solid var(--border-color);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
       border-radius: var(--radius-lg);
-      padding: 9px 14px;
+      padding: 8px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
       flex-wrap: wrap;
-      gap: 10px;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-card);
     }
 
-    .mode-label-group {
+    .dock-mode-selection {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .mode-pills-container {
-      display: flex;
-      align-items: center;
-      gap: 7px;
       flex-wrap: wrap;
     }
 
-    .mode-pill {
+    .dock-label-hint {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mode-pills-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .mode-pill-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 5px 12px;
-      border-radius: 20px;
+      border-radius: var(--radius-pill);
       border: 1.5px solid transparent;
       cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.15s ease;
+      font-size: 11.5px;
+      font-weight: 700;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
       user-select: none;
+      background: #ffffff;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-subtle);
     }
 
-    .mode-pill .pill-dot {
+    .mode-pill-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .mode-pill-btn .mode-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
+      transition: transform 0.15s ease;
     }
 
-    /* Modos */
-    .mode-pill.pill-habilitado { background: #f0fdf4; color: var(--hab-text); border-color: #bbf7d0; }
-    .mode-pill.pill-habilitado .pill-dot { background: var(--hab-dot); }
-    .mode-pill.pill-habilitado.active { background: #dcfce7; border-color: #10b981; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
+    /* Estilos activos por modo */
+    .mode-pill-btn.mode-hab { border-color: #d1fae5; color: var(--hab-text); }
+    .mode-pill-btn.mode-hab .mode-dot { background: var(--hab-dot); }
+    .mode-pill-btn.mode-hab.active {
+      background: var(--hab-bg);
+      border-color: var(--hab-dot);
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+    .mode-pill-btn.mode-hab.active .mode-dot { transform: scale(1.25); }
 
-    .mode-pill.pill-bloqueado { background: #fff1f2; color: var(--bloq-text); border-color: #fecdd3; }
-    .mode-pill.pill-bloqueado .pill-dot { background: var(--bloq-dot); }
-    .mode-pill.pill-bloqueado.active { background: #ffe4e6; border-color: #f43f5e; box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2); }
+    .mode-pill-btn.mode-bloq { border-color: #ffe4e6; color: var(--bloq-text); }
+    .mode-pill-btn.mode-bloq .mode-dot { background: var(--bloq-dot); }
+    .mode-pill-btn.mode-bloq.active {
+      background: var(--bloq-bg);
+      border-color: var(--bloq-dot);
+      box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
+    }
+    .mode-pill-btn.mode-bloq.active .mode-dot { transform: scale(1.25); }
 
-    .mode-pill.pill-capacitacion { background: #f5f3ff; color: var(--cap-text); border-color: #ddd6fe; }
-    .mode-pill.pill-capacitacion .pill-dot { background: var(--cap-dot); }
-    .mode-pill.pill-capacitacion.active { background: #ede9fe; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
+    .mode-pill-btn.mode-cap { border-color: #ede9fe; color: var(--cap-text); }
+    .mode-pill-btn.mode-cap .mode-dot { background: var(--cap-dot); }
+    .mode-pill-btn.mode-cap.active {
+      background: var(--cap-bg);
+      border-color: var(--cap-dot);
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+    }
+    .mode-pill-btn.mode-cap.active .mode-dot { transform: scale(1.25); }
 
-    .mode-pill.pill-limpiar { background: #f8fafc; color: #475569; border-color: #e2e8f0; }
-    .mode-pill.pill-limpiar .pill-dot { background: #94a3b8; }
-    .mode-pill.pill-limpiar.active { background: #e2e8f0; border-color: #64748b; box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.2); }
+    .mode-pill-btn.mode-comp { border-color: #ffedd5; color: var(--comp-text); }
+    .mode-pill-btn.mode-comp .mode-dot { background: var(--comp-dot); }
+    .mode-pill-btn.mode-comp.active {
+      background: var(--comp-bg);
+      border-color: var(--comp-dot);
+      box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+    }
+    .mode-pill-btn.mode-comp.active .mode-dot { transform: scale(1.25); }
 
-    /* Saltos rápidos de meses */
-    .quick-jumps-row {
+    .mode-pill-btn.mode-clear { border-color: #e2e8f0; color: #64748b; }
+    .mode-pill-btn.mode-clear .mode-dot { background: #94a3b8; }
+    .mode-pill-btn.mode-clear.active {
+      background: #f1f5f9;
+      border-color: #64748b;
+      box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
+    }
+
+    /* MINI METRICAS INTEGRADAS EN EL DOCK */
+    .dock-live-counters {
       display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .counter-tag {
+      display: inline-flex;
       align-items: center;
       gap: 5px;
-      font-size: 11.5px;
-      color: var(--text-muted);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      background: #ffffff;
+      border: 1px solid var(--border-light);
     }
 
-    .chip-jump {
-      background: white;
-      border: 1px solid var(--border-color);
-      padding: 3px 9px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-main);
-      cursor: pointer;
-      transition: all 0.12s ease;
-    }
-
-    .chip-jump:hover {
-      background: #f1f5f9;
-      border-color: #94a3b8;
-    }
-
-    .chip-jump.active {
-      background: #0f172a;
-      color: white;
-      border-color: #0f172a;
-    }
-
-    /* CINTA DE MÉTRICAS & INDICADORES (KPIS) */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-    }
-
-    .kpi-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .kpi-data {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .kpi-title {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-    }
-
-    .kpi-value {
-      font-family: var(--font-heading);
-      font-size: 20px;
+    .counter-badge-num {
+      font-family: var(--font-display);
       font-weight: 800;
-      line-height: 1.1;
-      margin-top: 2px;
+      font-size: 12px;
     }
 
-    .kpi-sub {
-      font-size: 10.5px;
-      color: var(--text-light);
-      margin-top: 1px;
-    }
+    .counter-hab { color: var(--hab-text); }
+    .counter-bloq { color: var(--bloq-text); }
+    .counter-cap { color: var(--cap-text); }
+    .counter-fest { color: var(--fest-text); }
 
-    .kpi-icon-pill {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-    }
-
-    .kpi-card.habiles .kpi-value { color: var(--hab-text); }
-    .kpi-card.habiles .kpi-icon-pill { background: var(--hab-bg); color: var(--hab-dot); }
-
-    .kpi-card.bloqueados .kpi-value { color: var(--bloq-text); }
-    .kpi-card.bloqueados .kpi-icon-pill { background: var(--bloq-bg); color: var(--bloq-dot); }
-
-    .kpi-card.capacitaciones .kpi-value { color: var(--cap-text); }
-    .kpi-card.capacitaciones .kpi-icon-pill { background: var(--cap-bg); color: var(--cap-dot); }
-
-    .kpi-card.festivos .kpi-value { color: var(--fest-text); }
-    .kpi-card.festivos .kpi-icon-pill { background: var(--fest-bg); color: var(--fest-dot); }
-
-    /* LAYOUT PRINCIPAL: CALENDARIO + AGENDA LATERAL */
-    .calendar-layout {
+    /* ==========================================================================
+       3. ESTRUCTURA PRINCIPAL: GRILLA DE CALENDARIO + AGENDA LATERAL
+       ========================================================================== */
+    .main-grid-layout {
       display: grid;
-      grid-template-columns: 1fr 310px;
+      grid-template-columns: minmax(0, 1fr) 320px;
       gap: 14px;
       align-items: start;
     }
 
-    @media (max-width: 1080px) {
-      .calendar-layout {
+    @media (max-width: 1160px) {
+      .main-grid-layout {
         grid-template-columns: 1fr;
       }
     }
 
-    /* CONTENEDOR DE VISTA DEL CALENDARIO */
-    .calendar-view-panel {
+    /* SUPERFICIE DE CALENDARIOS */
+    .calendars-board {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-    }
-
-    /* VISTA MENSUAL INDIVIDUAL */
-    .single-month-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .single-month-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .single-month-header h2 {
-      font-family: var(--font-heading);
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    /* VISTA PANORAMA CUATRIMESTRAL (4 MESES EN 2x2) */
-    .panorama-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
       gap: 14px;
+      min-width: 0;
+    }
+
+    /* PANORAMA 4 MESES (GRID 2x2 RIGUROSO) */
+    .panorama-quad-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      width: 100%;
     }
 
     @media (max-width: 820px) {
-      .panorama-grid {
+      .panorama-quad-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .panorama-month-card {
+    /* TARJETA DE MES (REFINAMIENTO TOTAL) */
+    .month-card-lux {
       background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 12px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px 14px 14px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      box-shadow: var(--shadow-sm);
-      transition: border-color 0.15s ease;
+      box-shadow: var(--shadow-card);
+      transition: all 0.2s ease;
+      min-width: 0;
+      width: 100%;
     }
 
-    .panorama-month-card:hover {
-      border-color: #cbd5e1;
+    .month-card-lux:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-elevated);
     }
 
-    .panorama-month-header {
+    /* Encabezado del mes */
+    .month-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -543,322 +575,452 @@
       border-bottom: 1px solid var(--border-light);
     }
 
-    .panorama-month-header h3 {
-      font-family: var(--font-heading);
-      font-size: 14.5px;
-      font-weight: 800;
-      color: var(--text-main);
+    .month-title-group {
       display: flex;
-      align-items: center;
+      align-items: baseline;
       gap: 6px;
     }
 
-    .panorama-month-header .month-stats-badge {
-      font-size: 10.5px;
-      font-weight: 600;
-      background: #f1f5f9;
-      color: var(--text-muted);
-      padding: 1px 7px;
-      border-radius: 6px;
-    }
-
-    /* ENCABEZADOS DÍAS SEMANA */
-    .weekdays-header {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 4px;
-      text-align: center;
-      padding-bottom: 2px;
-    }
-
-    .weekday-title {
-      font-family: var(--font-heading);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .weekday-title.weekend {
-      color: #94a3b8;
-    }
-
-    /* GRILLA DE DÍAS - COLUMNAS ESTRICTAMENTE IGUALES */
-    .days-grid {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 4px;
-    }
-
-    /* CELDA INDIVIDUAL DE DÍA (TAMAÑO UNIFORME Y PERFECTAMENTE ALINEADO) */
-    .day-cell {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      height: 66px;
-      min-width: 0;
-      overflow: hidden;
-      padding: 5px 6px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.12s ease;
-      user-select: none;
-    }
-
-    /* En la vista mensual individual las celdas son un poco más amplias pero uniformes */
-    .single-month-card .day-cell {
-      height: 80px;
-      min-width: 0;
-      overflow: hidden;
-    }
-
-    .day-cell:hover:not(.empty) {
-      border-color: #94a3b8;
-      box-shadow: var(--shadow-sm);
-      transform: translateY(-1px);
-    }
-
-    .day-cell.empty {
-      background: transparent;
-      border: 1px dashed transparent;
-      cursor: default;
-    }
-
-    .day-cell.today {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 1px #3b82f6;
-    }
-
-    .day-cell.weekend {
-      background: var(--weekend-bg);
-      border-color: #f1f5f9;
-    }
-
-    .day-top-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 2px;
-    }
-
-    .day-number {
-      font-family: var(--font-heading);
-      font-size: 13px;
+    .month-name-text {
+      font-family: var(--font-display);
+      font-size: 15px;
       font-weight: 800;
+      letter-spacing: -0.01em;
       color: var(--text-main);
     }
 
-    .day-cell.weekend .day-number {
-      color: var(--weekend-text);
-    }
-
-    .today-pill {
-      font-size: 8.5px;
-      font-weight: 700;
-      background: #dbeafe;
-      color: #1e40af;
-      padding: 0 4px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-
-    /* BADGES Y CHIPS DENTRO DE LA CELDA */
-    .day-badges-container {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-      max-width: 100%;
-      overflow: hidden;
-    }
-
-    .status-badge {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
+    .month-year-badge {
+      font-size: 12px;
       font-weight: 600;
-      padding: 2px 5px;
-      border-radius: 4px;
-      line-height: 1.2;
+      color: var(--text-muted);
+    }
+
+    .month-habiles-chip {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #0284c7;
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+    }
+
+    /* FILA DE NOMBRES DE DÍA (LUN, MAR, MIÉ...) */
+    .weekdays-header-row {
+      display: grid;
+      grid-template-columns: repeat(7, calc((100% - 30px) / 7));
+      gap: 5px;
+      text-align: center;
+      padding: 2px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .weekday-label {
+      font-family: var(--font-display);
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       min-width: 0;
-      max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .status-badge .badge-dot {
+    .weekday-label.is-weekend {
+      color: #94a3b8;
+    }
+
+    /* ==========================================================================
+       GRILLA DE CELDAS — SIMETRÍA MATEMÁTICA Y SIN DEFORMACIONES
+       ========================================================================== */
+    .month-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, calc((100% - 30px) / 7));
+      gap: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .day-cell {
+      background: #ffffff;
+      border: 1px solid #eef2f6;
+      border-radius: 9px;
+      height: 60px;
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 4px 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+
+    /* En vista mensual detallada las celdas son más amplias */
+    .single-mode-view .day-cell {
+      height: 78px;
+      padding: 6px 7px;
+    }
+
+    .day-cell:hover:not(.empty-day) {
+      border-color: #94a3b8;
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.07);
+      z-index: 2;
+    }
+
+    .day-cell.empty-day {
+      background: transparent;
+      border-color: transparent;
+      cursor: default;
+    }
+
+    .day-cell.is-weekend {
+      background: var(--wknd-bg);
+      border-color: #f1f5f9;
+    }
+
+    .day-cell.is-today {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1.5px rgba(59, 130, 246, 0.6);
+    }
+
+    /* Línea superior del día (Número + Hoy) */
+    .day-cell-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      line-height: 1;
+    }
+
+    .day-number {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .day-cell.is-weekend .day-number {
+      color: #64748b;
+    }
+
+    .today-ring-tag {
+      font-size: 8px;
+      font-weight: 800;
+      background: #3b82f6;
+      color: #ffffff;
+      padding: 1px 4px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    /* Contenedor de micro-etiquetas del día */
+    .day-badges-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    /* Píldora de estado (Texto truncado seguro) */
+    .status-mini-pill {
+      display: flex;
+      align-items: center;
+      gap: 3.5px;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      line-height: 1.2;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
+    }
+
+    .status-mini-pill .status-glow {
       width: 5px;
       height: 5px;
       border-radius: 50%;
       flex-shrink: 0;
     }
 
-    /* ESTILOS DE CELDA SEGÚN ESTADO */
-    .day-cell.status-habilitado {
-      background: var(--hab-bg);
-      border-color: var(--hab-border);
+    .status-mini-pill .status-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
     }
-    .day-cell.status-habilitado .status-badge {
-      background: var(--hab-badge);
-      color: var(--hab-text);
-    }
-    .day-cell.status-habilitado .badge-dot { background: var(--hab-dot); }
 
-    .day-cell.status-bloqueado {
-      background: var(--bloq-bg);
-      border-color: var(--bloq-border);
-    }
-    .day-cell.status-bloqueado .status-badge {
-      background: var(--bloq-badge);
-      color: var(--bloq-text);
-    }
-    .day-cell.status-bloqueado .badge-dot { background: var(--bloq-dot); }
-
-    .day-cell.status-capacitacion {
-      background: var(--cap-bg);
-      border-color: var(--cap-border);
-    }
-    .day-cell.status-capacitacion .status-badge {
-      background: var(--cap-badge);
-      color: var(--cap-text);
-    }
-    .day-cell.status-capacitacion .badge-dot { background: var(--cap-dot); }
-
-    /* ESTILO FESTIVO */
-    .day-cell.is-holiday {
-      background: var(--fest-bg);
-      border-color: var(--fest-border);
-    }
-    .holiday-badge {
-      background: var(--fest-badge);
-      color: var(--fest-text);
-      font-size: 9.5px;
-      font-weight: 600;
-      padding: 1px 4px;
-      border-radius: 3px;
+    /* 🇨🇴 Píldora de Festivo Oficial Colombia */
+    .festivo-mini-badge {
       display: flex;
       align-items: center;
       gap: 3px;
+      font-size: 8.5px;
+      font-weight: 700;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      background: var(--fest-chip);
+      color: var(--fest-text);
+      border: 1px solid var(--fest-border);
+      width: 100%;
       min-width: 0;
       max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
+    }
+
+    .festivo-mini-badge .fest-flag {
+      flex-shrink: 0;
+      font-size: 9px;
+    }
+
+    .festivo-mini-badge .fest-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* COLORES APLICADOS A CELDAS SEGÚN ESTADO */
+    .day-cell.status-hab {
+      background: var(--hab-bg);
+      border-color: var(--hab-border);
+    }
+    .day-cell.status-hab .status-mini-pill {
+      background: var(--hab-chip);
+      color: var(--hab-text);
+    }
+    .day-cell.status-hab .status-glow { background: var(--hab-dot); box-shadow: 0 0 4px var(--hab-dot); }
+
+    .day-cell.status-bloq {
+      background: var(--bloq-bg);
+      border-color: var(--bloq-border);
+    }
+    .day-cell.status-bloq .status-mini-pill {
+      background: var(--bloq-chip);
+      color: var(--bloq-text);
+    }
+    .day-cell.status-bloq .status-glow { background: var(--bloq-dot); box-shadow: 0 0 4px var(--bloq-dot); }
+
+    .day-cell.status-cap {
+      background: var(--cap-bg);
+      border-color: var(--cap-border);
+    }
+    .day-cell.status-cap .status-mini-pill {
+      background: var(--cap-chip);
+      color: var(--cap-text);
+    }
+    .day-cell.status-cap .status-glow { background: var(--cap-dot); box-shadow: 0 0 4px var(--cap-dot); }
+
+    .day-cell.status-comp {
+      background: var(--comp-bg);
+      border-color: var(--comp-border);
+    }
+    .day-cell.status-comp .status-mini-pill {
+      background: var(--comp-chip);
+      color: var(--comp-text);
+    }
+    .day-cell.status-comp .status-glow { background: var(--comp-dot); box-shadow: 0 0 4px var(--comp-dot); }
+
+    .day-cell.is-holiday:not(.status-hab):not(.status-bloq):not(.status-cap):not(.status-comp) {
+      background: #fffdf5;
+      border-color: #fef08a;
+    }
+
+    /* ==========================================================================
+       4. BARRA LATERAL: AGENDA CRONOLÓGICA & DETALLES EJECUTIVOS
+       ========================================================================== */
+    .sidebar-agenda-panel {
+      background: var(--bg-surface);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-card);
+      position: sticky;
+      top: 14px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+
+    .sidebar-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sidebar-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-event-counter {
+      font-size: 11px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: var(--text-secondary);
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+    }
+
+    /* Filtros de la agenda */
+    .agenda-tabs-bar {
+      display: flex;
+      background: #f1f5f9;
+      padding: 2.5px;
+      border-radius: 8px;
+      gap: 2px;
+    }
+
+    .agenda-tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 4px 6px;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.12s ease;
+    }
+
+    .agenda-tab-btn.active {
+      background: #ffffff;
+      color: var(--text-main);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    /* Lista cronológica */
+    .agenda-scroll-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .event-card-item {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      transition: all 0.12s ease;
+      position: relative;
+    }
+
+    .event-card-item:hover {
+      border-color: var(--border-hover);
+      transform: translateX(2px);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .event-date-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      flex-shrink: 0;
+      text-align: center;
+    }
+
+    .event-date-day {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text-main);
+    }
+
+    .event-date-month {
+      font-size: 8.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .event-info-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .event-title-line {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    /* LEYENDA */
-    .legend-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      padding: 10px 14px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      font-size: 11.5px;
-      color: var(--text-muted);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    /* PANEL LATERAL: AGENDA Y RESUMEN */
-    .sidebar-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 14px;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-light);
-      padding-bottom: 8px;
-    }
-
-    .sidebar-header h2 {
-      font-family: var(--font-heading);
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    .sidebar-section-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 5px;
-    }
-
-    .badge-count {
-      background: #f1f5f9;
-      color: var(--text-muted);
+    .event-desc-line {
       font-size: 10.5px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 8px;
-    }
-
-    .events-scroll-list {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      max-height: 250px;
-      overflow-y: auto;
-      padding-right: 2px;
-    }
-
-    .event-item-card {
-      padding: 7px 9px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      background: var(--bg-page);
+      color: var(--text-secondary);
+      margin-top: 1px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      font-size: 11.5px;
+      gap: 4px;
     }
 
-    .event-item-card.cap { background: var(--cap-bg); border-color: var(--cap-border); color: var(--cap-text); }
-    .event-item-card.fest { background: var(--fest-bg); border-color: var(--fest-border); color: var(--fest-text); }
-
-    .event-info {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
+    .event-badge-pill {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
     }
 
-    .event-info strong { font-weight: 600; }
-    .event-info span { font-size: 10px; opacity: 0.85; }
+    .event-badge-festivo { background: var(--fest-chip); color: var(--fest-text); border: 1px solid var(--fest-border); }
+    .event-badge-cap { background: var(--cap-chip); color: var(--cap-text); border: 1px solid var(--cap-border); }
+    .event-badge-hab { background: var(--hab-chip); color: var(--hab-text); }
+    .event-badge-bloq { background: var(--bloq-chip); color: var(--bloq-text); }
+    .event-badge-comp { background: var(--comp-chip); color: var(--comp-text); }
 
     .btn-delete-event {
       background: transparent;
@@ -868,410 +1030,466 @@
       font-size: 13px;
       padding: 2px 4px;
       border-radius: 4px;
-      line-height: 1;
+      transition: all 0.12s ease;
     }
-
     .btn-delete-event:hover {
       color: #ef4444;
-      background: rgba(239, 68, 68, 0.1);
+      background: #fee2e2;
     }
 
-    .empty-state {
+    /* Caja de instrucciones de sincronización */
+    .sync-info-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
       padding: 10px;
-      text-align: center;
-      color: var(--text-light);
       font-size: 11px;
-      border: 1px dashed var(--border-color);
-      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      line-height: 1.45;
     }
 
-    /* MODAL DE DETALLE DE CAPACITACIÓN */
-    .modal-overlay {
+    .sync-info-box strong {
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       5. MODAL PARA PROGRAMAR CAPACITACIÓN (MICRO-INTERACCIÓN ELEGANTE)
+       ========================================================================== */
+    .modal-backdrop {
       position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.4);
-      backdrop-filter: blur(4px);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 999;
+      z-index: 9999;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s ease;
-      padding: 16px;
+      transition: all 0.2s ease;
     }
 
-    .modal-overlay.open { opacity: 1; pointer-events: auto; }
-
-    .modal-box {
-      background: white;
-      border-radius: var(--radius-lg);
-      width: 100%;
-      max-width: 400px;
-      padding: 18px;
-      box-shadow: var(--shadow-lg);
-      border: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transform: scale(0.96);
-      transition: transform 0.2s ease;
-    }
-
-    .modal-overlay.open .modal-box { transform: scale(1); }
-
-    .modal-title {
-      font-family: var(--font-heading);
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    .modal-subtitle {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      margin-top: -6px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .form-group label {
-      font-size: 11.5px;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .form-input {
-      font-family: var(--font-body);
-      font-size: 12.5px;
-      padding: 7px 10px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      outline: none;
-    }
-
-    .form-input:focus {
-      border-color: #8b5cf6;
-      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
-    }
-
-    .modal-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    /* TOAST NOTIFICACIÓN */
-    .toast-pill {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(50px);
-      background: #0f172a;
-      color: white;
-      padding: 9px 18px;
-      border-radius: 30px;
-      font-size: 12.5px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .toast-pill.visible {
-      transform: translateX(-50%) translateY(0);
+    .modal-backdrop.open {
       opacity: 1;
       pointer-events: auto;
     }
 
-    /* ESTILOS DE IMPRESIÓN */
-    @media print {
-      body { background: white; padding: 0; }
-      .header-actions, .toolbar-modes, .btn-delete-event, .view-switch-container { display: none !important; }
-      .calendar-layout { grid-template-columns: 1fr; }
-      .panorama-grid { grid-template-columns: repeat(2, 1fr); }
+    .modal-card-box {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-elevated);
+      width: 92%;
+      max-width: 440px;
+      padding: 22px;
+      transform: scale(0.95);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-backdrop.open .modal-card-box {
+      transform: scale(1);
+    }
+
+    .modal-header-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .modal-header-line h3 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.12s ease;
+    }
+
+    .btn-close-modal:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .modal-body-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .form-control-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-text);
+      font-size: 13px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .form-control-input:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+
+    .presets-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .preset-pill {
+      background: #f5f3ff;
+      border: 1px solid #ddd6fe;
+      color: #5b21b6;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .preset-pill:hover {
+      background: #ede9fe;
+      transform: translateY(-1px);
+    }
+
+    .modal-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .btn-modal-cancel {
+      background: #f1f5f9;
+      border: none;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .btn-modal-save {
+      background: #8b5cf6;
+      color: #ffffff;
+      border: none;
+      padding: 7px 16px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-modal-save:hover {
+      background: #7c3aed;
+    }
+
+    /* ==========================================================================
+       6. TOAST NOTIFICACIÓN FLOTANTE
+       ========================================================================== */
+    .toast-popup {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: var(--font-display);
+      font-size: 12.5px;
+      font-weight: 700;
+      box-shadow: var(--shadow-elevated);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 10000;
+    }
+
+    .toast-popup.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* TOOLTIP FLOTANTE NATIVO */
+    [data-tooltip] {
+      position: relative;
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
+  <div class="app-wrapper">
 
-    <!-- 1. CABECERA PRINCIPAL -->
-    <header class="header-panel">
-      <div class="brand-section">
-        <div class="brand-logo">📅</div>
-        <div class="brand-info">
+    <!-- 1. BARRA SUPERIOR DE NAVEGACIÓN -->
+    <header class="top-navbar">
+      <div class="brand-cluster">
+        <div class="brand-icon-logo">📅</div>
+        <div class="brand-headlines">
           <h1>
             Calendario Operativo
-            <span class="flag-pill">🇨🇴 Colombia</span>
+            <span class="country-tag"><span class="col-flag"></span> Colombia</span>
           </h1>
-          <p>Disponibilidad, Bloqueos y Capacitaciones</p>
+          <p>Disponibilidad, Bloqueos, Capacitaciones & Festivos Oficiales</p>
         </div>
       </div>
 
-      <!-- SELECTOR DE VISTA (MENSUAL vs PANORAMA 4 MESES) -->
-      <div class="view-switch-container">
-        <button class="btn-view-tab" id="tabVistaMensual" onclick="cambiarTipoVista('mensual')">
-          📅 Mes Individual
+      <!-- Selector de Vista Segmentado -->
+      <div class="view-segment-control">
+        <button id="tabVistaPanorama" class="view-btn active" onclick="cambiarTipoVista('panorama')">
+          <span>📅 Panorama (Sep – Dic)</span>
         </button>
-        <button class="btn-view-tab active" id="tabVistaPanorama" onclick="cambiarTipoVista('panorama')">
-          🗓️ Panorama Sep — Dic (4 Meses)
+        <button id="tabVistaMensual" class="view-btn" onclick="cambiarTipoVista('mensual')">
+          <span>🗓️ Mes Detallado</span>
         </button>
       </div>
 
-      <!-- NAVEGADOR DE MES / AÑO -->
-      <div class="nav-date-group" id="grupoNavFecha">
-        <button class="btn-nav-arrow" id="btnPrevMonth" title="Anterior" onclick="navegarFecha(-1)">‹</button>
-        <select class="select-clean" id="selectMes" onchange="seleccionarMesAno()">
-          <!-- Vía JS -->
-        </select>
-        <select class="select-clean" id="selectAnio" onchange="seleccionarMesAno()">
-          <!-- Vía JS -->
-        </select>
-        <button class="btn-nav-arrow" id="btnNextMonth" title="Siguiente" onclick="navegarFecha(1)">›</button>
+      <!-- Navegación Temporal (Año / Mes) -->
+      <div class="date-nav-capsule">
+        <button class="btn-nav-step" onclick="navegarFecha(-1)" title="Anterior">‹</button>
+        <select id="selectMes" class="select-dropdown-clean" onchange="seleccionarMesAno()" style="display: none;"></select>
+        <select id="selectAnio" class="select-dropdown-clean" onchange="seleccionarMesAno()"></select>
+        <button class="btn-nav-step" onclick="navegarFecha(1)" title="Siguiente">›</button>
       </div>
 
-      <!-- ACCIONES: COMPARTIR Y EXPORTAR -->
-      <div class="header-actions">
-        <button class="btn-action btn-share" onclick="compartirEnlaceWeb()" title="Genera un enlace con tu programación para que otros la vean en GitHub">
-          🔗 Compartir Calendario
+      <!-- Acciones Rápidas -->
+      <div class="nav-actions-group">
+        <button class="btn-nav-action btn-share-primary" onclick="compartirEnlaceWeb()" title="Generar enlace permanente con datos">
+          <span>🔗 Compartir Calendario</span>
         </button>
-        <button class="btn-action btn-secondary" onclick="exportarExcel()" title="Descargar reporte en Excel">
-          📊 Excel
+        <button class="btn-nav-action btn-excel-export" onclick="exportarAExcel()" title="Descargar reporte en Excel">
+          <span>📊 Excel</span>
         </button>
-        <button class="btn-action btn-secondary" onclick="limpiarPeriodoVisible()" title="Limpiar marcas del periodo visible">
-          🧹 Limpiar
+        <button class="btn-nav-action btn-reset-clean" onclick="reiniciarMarcaciones()" title="Limpiar todas las selecciones">
+          <span>🧹 Limpiar</span>
         </button>
       </div>
     </header>
 
-    <!-- 2. BARRA DE HERRAMIENTAS: MODOS DE CLIC & ACCESOS RÁPIDOS -->
-    <section class="toolbar-modes">
-      <div class="mode-label-group">
-        <span>✏️ Modo al hacer clic:</span>
-        <div class="mode-pills-container">
-          <div class="mode-pill pill-habilitado active" id="btnModoHabilitado" onclick="fijarModo('habilitado')">
-            <span class="pill-dot"></span>
-            <strong>Habilitado</strong>
-          </div>
-          <div class="mode-pill pill-bloqueado" id="btnModoBloqueado" onclick="fijarModo('bloqueado')">
-            <span class="pill-dot"></span>
-            <strong>Bloqueado</strong>
-          </div>
-          <div class="mode-pill pill-capacitacion" id="btnModoCapacitacion" onclick="fijarModo('capacitacion')">
-            <span class="pill-dot"></span>
-            <strong>Capacitación</strong>
-          </div>
-          <div class="mode-pill pill-limpiar" id="btnModoLimpiar" onclick="fijarModo('limpiar')">
-            <span class="pill-dot"></span>
-            <strong>Borrar / Normal</strong>
-          </div>
+    <!-- 2. DOCK DE MODOS DE MARCADO & MÉTRICAS LIVE -->
+    <nav class="control-dock">
+      <div class="dock-mode-selection">
+        <span class="dock-label-hint">Modo al hacer clic:</span>
+        <div class="mode-pills-row">
+          <button id="btnModoHab" class="mode-pill-btn mode-hab active" onclick="fijarModo('habilitado')">
+            <span class="mode-dot"></span>
+            <span>Habilitado</span>
+          </button>
+          <button id="btnModoBloq" class="mode-pill-btn mode-bloq" onclick="fijarModo('bloqueado')">
+            <span class="mode-dot"></span>
+            <span>Bloqueado</span>
+          </button>
+          <button id="btnModoCap" class="mode-pill-btn mode-cap" onclick="fijarModo('capacitacion')">
+            <span class="mode-dot"></span>
+            <span>Capacitación</span>
+          </button>
+          <button id="btnModoComp" class="mode-pill-btn mode-comp" onclick="fijarModo('compensatorio')">
+            <span class="mode-dot"></span>
+            <span>Compensatorio</span>
+          </button>
+          <button id="btnModoClear" class="mode-pill-btn mode-clear" onclick="fijarModo('limpiar')">
+            <span class="mode-dot"></span>
+            <span>Borrar / Normal</span>
+          </button>
         </div>
       </div>
 
-      <!-- Accesos Rápidos a Meses del Panorama -->
-      <div class="quick-jumps-row">
-        <span>Ir a:</span>
-        <button class="chip-jump" onclick="irAMesEspecifico(8)">🍂 Sep</button>
-        <button class="chip-jump" onclick="irAMesEspecifico(9)">🎃 Oct</button>
-        <button class="chip-jump" onclick="irAMesEspecifico(10)">🍁 Nov</button>
-        <button class="chip-jump" onclick="irAMesEspecifico(11)">🎄 Dic</button>
-      </div>
-    </section>
-
-    <!-- 3. CINTA DE MÉTRICAS & INDICADORES (KPIS) -->
-    <section class="kpi-grid">
-      <div class="kpi-card habiles">
-        <div class="kpi-data">
-          <span class="kpi-title">Días Habilitados</span>
-          <span class="kpi-value" id="kpiHabilitados">0</span>
-          <span class="kpi-sub" id="kpiHabilitadosSub">0% del periodo hábil</span>
+      <!-- Contadores Resumidos en el Dock -->
+      <div class="dock-live-counters">
+        <div class="counter-tag counter-hab" title="Días Habilitados en el periodo">
+          🟢 <span id="kpiHabilitados" class="counter-badge-num">0</span> hab.
         </div>
-        <div class="kpi-icon-pill">🟢</div>
-      </div>
-
-      <div class="kpi-card bloqueados">
-        <div class="kpi-data">
-          <span class="kpi-title">Días Bloqueados</span>
-          <span class="kpi-value" id="kpiBloqueados">0</span>
-          <span class="kpi-sub" id="kpiBloqueadosSub">Cierres o descansos</span>
+        <div class="counter-tag counter-bloq" title="Días Bloqueados">
+          🔴 <span id="kpiBloqueados" class="counter-badge-num">0</span> bloq.
         </div>
-        <div class="kpi-icon-pill">🔴</div>
-      </div>
-
-      <div class="kpi-card capacitaciones">
-        <div class="kpi-data">
-          <span class="kpi-title">Capacitaciones</span>
-          <span class="kpi-value" id="kpiCapacitaciones">0</span>
-          <span class="kpi-sub">Jornadas formativas</span>
+        <div class="counter-tag counter-cap" title="Jornadas de Capacitación">
+          🟣 <span id="kpiCapacitaciones" class="counter-badge-num">0</span> capac.
         </div>
-        <div class="kpi-icon-pill">🟣</div>
-      </div>
-
-      <div class="kpi-card festivos">
-        <div class="kpi-data">
-          <span class="kpi-title">Festivos Colombia</span>
-          <span class="kpi-value" id="kpiFestivos">0</span>
-          <span class="kpi-sub" id="kpiFestivosSub">Ley 51 de 1983</span>
+        <div class="counter-tag counter-fest" title="Festivos oficiales de Colombia en el periodo">
+          🇨🇴 <span id="kpiFestivos" class="counter-badge-num">5</span> festivos
         </div>
-        <div class="kpi-icon-pill">🇨🇴</div>
       </div>
-    </section>
+    </nav>
 
-    <!-- 4. LAYOUT PRINCIPAL: CALENDARIO (MENSUAL / PANORAMA) + DETALLES -->
-    <main class="calendar-layout">
+    <!-- 3. ZONA PRINCIPAL DE TRABAJO (CALENDARIOS + SIDEBAR AGENDA) -->
+    <main class="main-grid-layout">
+      
+      <!-- Contenedor donde se montan los meses -->
+      <section id="contenedorCalendarios" class="calendars-board"></section>
 
-      <!-- COLUMNA IZQUIERDA: CALENDARIO -->
-      <section class="calendar-view-panel" id="seccionCalendario">
-        <!-- Renderizado dinámico vía JavaScript -->
-      </section>
-
-      <!-- COLUMNA DERECHA: AGENDA & RESUMEN -->
-      <aside class="sidebar-card">
-        <div class="sidebar-header">
-          <h2>📋 Agenda & Eventos</h2>
-          <span class="badge-count" id="badgeTotalEventos">0 eventos</span>
-        </div>
-
-        <!-- Capacitaciones programadas -->
-        <div>
-          <div class="sidebar-section-title">
-            <span>🟣 Capacitaciones</span>
-            <span class="badge-count" id="countCapacitacionesSide">0</span>
+      <!-- Panel Lateral de Agenda & Eventos -->
+      <aside class="sidebar-agenda-panel">
+        <div class="sidebar-header-row">
+          <div class="sidebar-title">
+            <span>📋 Agenda de Eventos</span>
           </div>
-          <div class="events-scroll-list" id="listaCapacitacionesSide">
-            <!-- Renderizado dinámico -->
-          </div>
+          <span id="badgeTotalEventos" class="badge-event-counter">0 eventos</span>
         </div>
 
-        <!-- Festivos oficiales de Colombia -->
-        <div>
-          <div class="sidebar-section-title">
-            <span>🇨🇴 Festivos Oficiales</span>
-            <span class="badge-count" id="countFestivosSide">0</span>
-          </div>
-          <div class="events-scroll-list" id="listaFestivosSide">
-            <!-- Renderizado dinámico -->
-          </div>
+        <!-- Pestañas de filtro de agenda -->
+        <div class="agenda-tabs-bar">
+          <button id="tabFiltroTodos" class="agenda-tab-btn active" onclick="filtrarAgenda('todos')">Todos</button>
+          <button id="tabFiltroFestivos" class="agenda-tab-btn" onclick="filtrarAgenda('festivos')">Festivos</button>
+          <button id="tabFiltroCapacitaciones" class="agenda-tab-btn" onclick="filtrarAgenda('capacitaciones')">Capacitación</button>
         </div>
 
-        <!-- Mensaje de ayuda GitHub Pages -->
-        <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-light); font-size: 11px; color: var(--text-muted); line-height: 1.4;">
-          <strong>🚀 Listo para GitHub Pages:</strong><br/>
-          Puedes marcar días en cualquiera de los meses. El botón <em>Compartir Calendario</em> generará un link que cargará exactamente tus 4 meses a quien lo reciba.
+        <!-- Lista de Eventos -->
+        <div id="listaAgendaScroll" class="agenda-scroll-list"></div>
+
+        <!-- Resumen Rápido -->
+        <div class="sync-info-box">
+          <strong>⚡ Publicación en GitHub Pages:</strong>
+          <p style="margin-top: 4px;">Al compartir el enlace generado con el botón superior, cualquier colega verá exactamente tus 4 meses con los mismos días programados.</p>
         </div>
       </aside>
 
     </main>
 
-    <!-- LEYENDA INFORMATIVA -->
-    <footer class="legend-row">
-      <div class="legend-item">
-        <span class="legend-dot" style="background: var(--hab-dot);"></span>
-        <span>Habilitado (Disponible)</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-dot" style="background: var(--bloq-dot);"></span>
-        <span>Bloqueado (No disponible)</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-dot" style="background: var(--cap-dot);"></span>
-        <span>Capacitación / Formación</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-dot" style="background: var(--fest-dot);"></span>
-        <span>Festivo Oficial Colombia</span>
-      </div>
-      <div class="legend-item" style="margin-left: auto;">
-        <span>💡 Haz clic en cualquier día para asignar la modalidad activa</span>
-      </div>
-    </footer>
-
   </div>
 
-  <!-- MODAL PARA NOMBRAR / DETALLAR CAPACITACIÓN -->
-  <div class="modal-overlay" id="modalCapacitacion">
-    <div class="modal-box">
-      <h3 class="modal-title">🟣 Detalle de Capacitación</h3>
-      <p class="modal-subtitle" id="modalFechaTexto">Fecha seleccionada</p>
-
-      <div class="form-group">
-        <label for="inputTemaCapacitacion">Tema o Nombre del Taller / Curso:</label>
-        <input type="text" id="inputTemaCapacitacion" class="form-input" placeholder="Ej: Inducción Operativa, SST, Liderazgo..." />
+  <!-- MODAL PARA INGRESAR DETALLE DE CAPACITACIÓN -->
+  <div id="modalCapacitacion" class="modal-backdrop">
+    <div class="modal-card-box">
+      <div class="modal-header-line">
+        <h3><span>🟣 Programar Capacitación</span></h3>
+        <button class="btn-close-modal" onclick="cerrarModalCapacitacion()">✕</button>
       </div>
 
-      <div class="modal-buttons">
-        <button class="btn-action btn-secondary" onclick="cerrarModalCapacitacion()">Cancelar</button>
-        <button class="btn-action btn-share" onclick="guardarTemaCapacitacion()">Guardar Capacitación</button>
+      <div class="modal-body-form">
+        <div class="form-group">
+          <label>Fecha Seleccionada:</label>
+          <div id="modalFechaTexto" style="font-size: 13px; font-weight: 700; color: #5b21b6; background: #f5f3ff; padding: 6px 10px; border-radius: 6px; border: 1px solid #ddd6fe;"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="inputTemaCapacitacion">Nombre o Tema del Taller / Capacitación:</label>
+          <input type="text" id="inputTemaCapacitacion" class="form-control-input" placeholder="Ej: Inducción a Nuevas Políticas, ISO 27001..." />
+          
+          <div class="presets-tags-row">
+            <span class="preset-pill" onclick="asignarTemaRapido('Inducción Operativa')">+ Inducción</span>
+            <span class="preset-pill" onclick="asignarTemaRapido('Ciberseguridad & Datos')">+ Ciberseguridad</span>
+            <span class="preset-pill" onclick="asignarTemaRapido('Herramientas Digitales')">+ Herramientas</span>
+            <span class="preset-pill" onclick="asignarTemaRapido('Liderazgo & Gestión')">+ Liderazgo</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inputHorarioCapacitacion">Horario o Instructor (Opcional):</label>
+          <input type="text" id="inputHorarioCapacitacion" class="form-control-input" placeholder="Ej: 08:00 AM - 12:00 PM (Virtual)" />
+        </div>
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="btn-modal-cancel" onclick="cerrarModalCapacitacion()">Cancelar</button>
+        <button class="btn-modal-save" onclick="guardarCapacitacionModal()">Guardar en Calendario</button>
       </div>
     </div>
   </div>
 
-  <!-- TOAST DE NOTIFICACIÓN FLOTANTE -->
-  <div class="toast-pill" id="toastNotificacion">
-    <span id="toastIcono">✅</span>
-    <span id="toastMensaje">Enlace copiado al portapapeles</span>
+  <!-- TOAST DE NOTIFICACIÓN -->
+  <div id="toastPopup" class="toast-popup">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg">Acción completada</span>
   </div>
 
-  <!-- LÓGICA JAVASCRIPT INTEGRAL -->
+  <!-- JAVASCRIPT PRINCIPAL -->
   <script>
     /**
      * =========================================================================
-     * CALENDARIO OPERATIVO COLOMBIA — PANORAMA MULTI-MES & VISTA MENSUAL
-     * Con motor de Festivos Oficiales (Ley Emiliani) + Compartir por Enlace Web
+     * MOTOR AUTÓNOMO DE CALENDARIO, FESTIVOS LEY EMILIANI & ESTADOS
      * =========================================================================
      */
 
-    const MESES = [
+    const NOMBRES_MESES = [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
     ];
 
-    const NOMBRES_DIAS_SEMANA = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-    const DIAS_SEMANA_COMPLETOS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    const ABREV_MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    const DIAS_SEMANA = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+    const DIAS_COMPLETOS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
-    // Meses que componen el Panorama solicitado (Septiembre a Diciembre)
-    const MESES_PANORAMA = [8, 9, 10, 11]; // 8=Septiembre, 9=Octubre, 10=Noviembre, 11=Diciembre
+    // 4 Meses del Panorama Solicitado (Septiembre a Diciembre)
+    const MESES_PANORAMA = [8, 9, 10, 11];
 
-    // Estado Global
-    const fechaActual = new Date();
-    let anioActivo = 2026; // Año 2026 predeterminado
-    let mesActivo = 8;     // Predeterminado en Septiembre (8)
-    let tipoVista = "panorama"; // "panorama" (4 meses) | "mensual" (1 mes)
-    let modoActivo = "habilitado"; // "habilitado" | "bloqueado" | "capacitacion" | "limpiar"
-    let fechaPendienteCapacitacion = null;
+    // Estado de la aplicación
+    const fechaSistema = new Date();
+    let anioActual = 2026;
+    let mesActual = 8; // Septiembre por defecto
+    let modoVista = "panorama"; // "panorama" (4 meses) | "mensual" (1 mes)
+    let modoMarcado = "habilitado"; // "habilitado" | "bloqueado" | "capacitacion" | "compensatorio" | "limpiar"
+    let filtroAgendaActivo = "todos"; // "todos" | "festivos" | "capacitaciones"
 
-    // Almacén de Programación (clave: "AAAA-MM-DD", valor: { estado: string, detalle?: string })
-    let agendaDias = {};
+    let fechaModalPendiente = null;
 
-    const STORAGE_KEY = "colombia_calendario_operativo_v2";
+    // Almacén de fechas: { "AAAA-MM-DD": { estado: string, detalle?: string, horario?: string } }
+    let datosCalendario = {};
 
-    /**
-     * =========================================================================
-     * UTILIDADES DE FECHAS & COMPUTO DE PASCUA (FESTIVOS LEY EMILIANI)
-     * =========================================================================
-     */
-    function pad2(n) {
+    const STORAGE_KEY = "colombia_calendario_operativo_pro_2026";
+
+    /* --------------------------------------------------------------------------
+       UTILIDADES DE FECHAS
+       -------------------------------------------------------------------------- */
+    function dosDigitos(n) {
       return String(n).padStart(2, "0");
     }
 
-    function claveFecha(y, m, d) {
-      return `${y}-${pad2(m + 1)}-${pad2(d)}`;
+    function formaterClave(y, m, d) {
+      return `${y}-${dosDigitos(m + 1)}-${dosDigitos(d)}`;
     }
 
-    function fechaDesdePartes(y, m, d) {
-      return new Date(y, m - 1, d, 12, 0, 0);
+    function parsearClave(clave) {
+      const partes = clave.split("-");
+      return {
+        anio: parseInt(partes[0], 10),
+        mes: parseInt(partes[1], 10) - 1,
+        dia: parseInt(partes[2], 10)
+      };
     }
 
     function sumarDias(fecha, dias) {
@@ -1280,15 +1498,15 @@
       return f;
     }
 
-    function siguienteLunes(fecha) {
-      const dia = fecha.getDay(); // 0 = Dom, 1 = Lun...
-      const diff = dia === 1 ? 0 : (8 - dia) % 7;
-      return sumarDias(fecha, diff);
+    function trasladarALunes(fecha) {
+      const diaSemana = fecha.getDay(); // 0 = Domingo, 1 = Lunes...
+      const delta = diaSemana === 1 ? 0 : (8 - diaSemana) % 7;
+      return sumarDias(fecha, delta);
     }
 
-    /**
-     * Algoritmo Butcher para Pascua
-     */
+    /* --------------------------------------------------------------------------
+       CÁLCULO EXACTO DE FESTIVOS COLOMBIA (LEY 51 DE 1983 - LEY EMILIANI)
+       -------------------------------------------------------------------------- */
     function calcularPascua(y) {
       const a = y % 19;
       const b = Math.floor(y / 100);
@@ -1304,170 +1522,166 @@
       const m = Math.floor((a + 11 * h + 22 * l) / 451);
       const mesPascua = Math.floor((h + l - 7 * m + 114) / 31);
       const diaPascua = ((h + l - 7 * m + 114) % 31) + 1;
-      return fechaDesdePartes(y, mesPascua, diaPascua);
+      return new Date(y, mesPascua - 1, diaPascua, 12, 0, 0);
     }
 
-    /**
-     * Festivos Oficiales de Colombia (Ley 51 de 1983 - Ley Emiliani)
-     */
     function obtenerFestivosColombia(y) {
       const pascua = calcularPascua(y);
       const lista = [
-        { fecha: fechaDesdePartes(y, 1, 1), nombre: "Año Nuevo" },
-        { fecha: siguienteLunes(fechaDesdePartes(y, 1, 6)), nombre: "Reyes Magos" },
-        { fecha: siguienteLunes(fechaDesdePartes(y, 3, 19)), nombre: "San José" },
+        { fecha: new Date(y, 0, 1), nombre: "Año Nuevo" },
+        { fecha: trasladarALunes(new Date(y, 0, 6)), nombre: "Reyes Magos" },
+        { fecha: trasladarALunes(new Date(y, 2, 19)), nombre: "San José" },
         { fecha: sumarDias(pascua, -3), nombre: "Jueves Santo" },
         { fecha: sumarDias(pascua, -2), nombre: "Viernes Santo" },
-        { fecha: fechaDesdePartes(y, 5, 1), nombre: "Día del Trabajo" },
-        { fecha: siguienteLunes(sumarDias(pascua, 39)), nombre: "Ascensión del Señor" },
-        { fecha: siguienteLunes(sumarDias(pascua, 60)), nombre: "Corpus Christi" },
-        { fecha: siguienteLunes(sumarDias(pascua, 68)), nombre: "Sagrado Corazón" },
-        { fecha: siguienteLunes(fechaDesdePartes(y, 6, 29)), nombre: "San Pedro y San Pablo" },
-        { fecha: fechaDesdePartes(y, 7, 20), nombre: "Día de la Independencia" },
-        { fecha: fechaDesdePartes(y, 8, 7), nombre: "Batalla de Boyacá" },
-        { fecha: siguienteLunes(fechaDesdePartes(y, 8, 15)), nombre: "Asunción de la Virgen" },
-        { fecha: siguienteLunes(fechaDesdePartes(y, 10, 12)), nombre: "Día de la Raza" },
-        { fecha: siguienteLunes(fechaDesdePartes(y, 11, 1)), nombre: "Todos los Santos" },
-        { fecha: siguienteLunes(fechaDesdePartes(y, 11, 11)), nombre: "Independencia de Cartagena" },
-        { fecha: fechaDesdePartes(y, 12, 8), nombre: "Inmaculada Concepción" },
-        { fecha: fechaDesdePartes(y, 12, 25), nombre: "Navidad" }
+        { fecha: new Date(y, 4, 1), nombre: "Día del Trabajo" },
+        { fecha: trasladarALunes(sumarDias(pascua, 39)), nombre: "Ascensión del Señor" },
+        { fecha: trasladarALunes(sumarDias(pascua, 60)), nombre: "Corpus Christi" },
+        { fecha: trasladarALunes(sumarDias(pascua, 68)), nombre: "Sagrado Corazón" },
+        { fecha: trasladarALunes(new Date(y, 5, 29)), nombre: "San Pedro y San Pablo" },
+        { fecha: new Date(y, 6, 20), nombre: "Día de la Independencia" },
+        { fecha: new Date(y, 7, 7), nombre: "Batalla de Boyacá" },
+        { fecha: trasladarALunes(new Date(y, 7, 15)), nombre: "Asunción de la Virgen" },
+        { fecha: trasladarALunes(new Date(y, 9, 12)), nombre: "Día de la Raza" },
+        { fecha: trasladarALunes(new Date(y, 10, 1)), nombre: "Todos los Santos" },
+        { fecha: trasladarALunes(new Date(y, 10, 11)), nombre: "Independencia de Cartagena" },
+        { fecha: new Date(y, 11, 8), nombre: "Inmaculada Concepción" },
+        { fecha: new Date(y, 11, 25), nombre: "Navidad" }
       ];
 
       const mapa = {};
-      lista.forEach(item => {
-        const k = `${item.fecha.getFullYear()}-${pad2(item.fecha.getMonth() + 1)}-${pad2(item.fecha.getDate())}`;
-        mapa[k] = item.nombre;
+      lista.forEach(f => {
+        const k = formaterClave(f.fecha.getFullYear(), f.fecha.getMonth(), f.fecha.getDate());
+        mapa[k] = f.nombre;
       });
       return mapa;
     }
 
-    /**
-     * =========================================================================
-     * PERSISTENCIA & SINCRONIZACIÓN DE ENLACE WEB (URL HASH)
-     * =========================================================================
-     */
-    function guardarEnLocalStorage() {
+    /* --------------------------------------------------------------------------
+       PERSISTENCIA (LOCALSTORAGE + ENLACE COMPARTIBLE HASH)
+       -------------------------------------------------------------------------- */
+    function guardarEnStorage() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(agendaDias));
-      } catch (err) {
-        console.warn("Error guardando en localStorage:", err);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(datosCalendario));
+      } catch (e) {
+        console.warn("Storage warning:", e);
       }
     }
 
-    function cargarDesdeLocalStorage() {
+    function cargarDeStorage() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) agendaDias = JSON.parse(raw);
-      } catch (err) {
-        console.warn("Error leyendo localStorage:", err);
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) datosCalendario = JSON.parse(saved);
+      } catch (e) {
+        console.warn("Storage read error:", e);
       }
     }
 
-    function cargarDesdeURL() {
+    function cargarDesdeHashURL() {
       const hash = window.location.hash;
       if (!hash || !hash.includes("data=")) return false;
 
       try {
-        const base64Data = hash.split("data=")[1];
-        const jsonStr = decodeURIComponent(escape(atob(base64Data)));
-        const datosCargados = JSON.parse(jsonStr);
-
-        if (datosCargados && typeof datosCargados === "object") {
-          agendaDias = datosCargados;
-          guardarEnLocalStorage();
-          mostrarToast("✨ ¡Calendario compartido cargado exitosamente!", "🔗");
+        const b64 = hash.split("data=")[1];
+        const json = decodeURIComponent(escape(atob(b64)));
+        const data = JSON.parse(json);
+        if (data && typeof data === "object") {
+          datosCalendario = data;
+          guardarEnStorage();
+          mostrarToast("✨ Calendario compartido cargado correctamente", "🔗");
           return true;
         }
       } catch (err) {
-        console.error("No se pudo decodificar la URL compartida:", err);
+        console.error("Error decodificando hash:", err);
       }
       return false;
     }
 
     function compartirEnlaceWeb() {
       try {
-        const jsonStr = JSON.stringify(agendaDias);
-        const base64Data = btoa(unescape(encodeURIComponent(jsonStr)));
-        const urlCompartible = `${window.location.origin}${window.location.pathname}#data=${base64Data}`;
+        const json = JSON.stringify(datosCalendario);
+        const b64 = btoa(unescape(encodeURIComponent(json)));
+        const urlFinal = `${window.location.origin}${window.location.pathname}#data=${b64}`;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(urlCompartible).then(() => {
-            mostrarToast("¡Enlace copiado! Compártelo con tu equipo", "📋");
+          navigator.clipboard.writeText(urlFinal).then(() => {
+            mostrarToast("¡Enlace copiado! Pégalo y envíalo a tu equipo", "📋");
           });
         } else {
-          const inputTemp = document.createElement("input");
-          inputTemp.value = urlCompartible;
-          document.body.appendChild(inputTemp);
-          inputTemp.select();
+          const temp = document.createElement("input");
+          temp.value = urlFinal;
+          document.body.appendChild(temp);
+          temp.select();
           document.execCommand("copy");
-          inputTemp.remove();
+          temp.remove();
           mostrarToast("¡Enlace copiado al portapapeles!", "📋");
         }
 
-        window.location.hash = `data=${base64Data}`;
+        window.location.hash = `data=${b64}`;
       } catch (err) {
-        alert("Error al generar enlace compartible: " + err.message);
+        alert("Error generando enlace: " + err.message);
       }
     }
 
-    function mostrarToast(mensaje, icono = "✅") {
-      const toast = document.getElementById("toastNotificacion");
-      document.getElementById("toastMensaje").textContent = mensaje;
-      document.getElementById("toastIcono").textContent = icono;
+    function reiniciarMarcaciones() {
+      if (confirm("¿Estás seguro de que deseas limpiar todas las programaciones marcadas?")) {
+        datosCalendario = {};
+        guardarEnStorage();
+        if (window.location.hash.includes("data=")) {
+          history.replaceState(null, null, window.location.pathname);
+        }
+        renderizarTodo();
+        mostrarToast("Calendario reiniciado a estado limpio", "🧹");
+      }
+    }
+
+    function mostrarToast(mensaje, icono = "✨") {
+      const toast = document.getElementById("toastPopup");
+      document.getElementById("toastMsg").textContent = mensaje;
+      document.getElementById("toastIcon").textContent = icono;
       toast.classList.add("visible");
       setTimeout(() => {
         toast.classList.remove("visible");
       }, 3500);
     }
 
-    /**
-     * =========================================================================
-     * GESTIÓN DE VISTAS Y FECHAS
-     * =========================================================================
-     */
-    function cambiarTipoVista(tipo) {
-      tipoVista = tipo;
-      document.getElementById("tabVistaMensual").classList.toggle("active", tipo === "mensual");
-      document.getElementById("tabVistaPanorama").classList.toggle("active", tipo === "panorama");
-      
-      const selectMes = document.getElementById("selectMes");
-      if (tipo === "panorama") {
-        selectMes.style.display = "none";
-      } else {
-        selectMes.style.display = "inline-block";
-      }
-
-      renderizar();
+    /* --------------------------------------------------------------------------
+       GESTIÓN DE MODOS Y VISTAS
+       -------------------------------------------------------------------------- */
+    function fijarModo(modo) {
+      modoMarcado = modo;
+      document.querySelectorAll(".mode-pill-btn").forEach(btn => btn.classList.remove("active"));
+      if (modo === "habilitado") document.getElementById("btnModoHab").classList.add("active");
+      if (modo === "bloqueado") document.getElementById("btnModoBloq").classList.add("active");
+      if (modo === "capacitacion") document.getElementById("btnModoCap").classList.add("active");
+      if (modo === "compensatorio") document.getElementById("btnModoComp").classList.add("active");
+      if (modo === "limpiar") document.getElementById("btnModoClear").classList.add("active");
     }
 
-    function irAMesEspecifico(m) {
-      mesActivo = m;
-      cambiarTipoVista("mensual");
+    function cambiarTipoVista(tipo) {
+      modoVista = tipo;
+      document.getElementById("tabVistaPanorama").classList.toggle("active", tipo === "panorama");
+      document.getElementById("tabVistaMensual").classList.toggle("active", tipo === "mensual");
+
+      const selectMes = document.getElementById("selectMes");
+      selectMes.style.display = tipo === "mensual" ? "inline-block" : "none";
+
+      renderizarTodo();
     }
 
     function navegarFecha(delta) {
-      if (tipoVista === "panorama") {
-        anioActivo += delta;
+      if (modoVista === "panorama") {
+        anioActual += delta;
       } else {
-        mesActivo += delta;
-        if (mesActivo < 0) {
-          mesActivo = 11;
-          anioActivo -= 1;
-        } else if (mesActivo > 11) {
-          mesActivo = 0;
-          anioActivo += 1;
+        mesActual += delta;
+        if (mesActual < 0) {
+          mesActual = 11;
+          anioActual -= 1;
+        } else if (mesActual > 11) {
+          mesActual = 0;
+          anioActual += 1;
         }
       }
-      renderizar();
-    }
-
-    function fijarModo(modo) {
-      modoActivo = modo;
-      document.querySelectorAll(".mode-pill").forEach(p => p.classList.remove("active"));
-      if (modo === "habilitado") document.getElementById("btnModoHabilitado").classList.add("active");
-      if (modo === "bloqueado") document.getElementById("btnModoBloqueado").classList.add("active");
-      if (modo === "capacitacion") document.getElementById("btnModoCapacitacion").classList.add("active");
-      if (modo === "limpiar") document.getElementById("btnModoLimpiar").classList.add("active");
+      renderizarTodo();
     }
 
     function sincronizarSelectores() {
@@ -1475,11 +1689,11 @@
       const selectAnio = document.getElementById("selectAnio");
 
       selectMes.innerHTML = "";
-      MESES.forEach((m, idx) => {
+      NOMBRES_MESES.forEach((m, idx) => {
         const opt = document.createElement("option");
         opt.value = idx;
         opt.textContent = m;
-        if (idx === mesActivo) opt.selected = true;
+        if (idx === mesActual) opt.selected = true;
         selectMes.appendChild(opt);
       });
 
@@ -1488,465 +1702,521 @@
         const opt = document.createElement("option");
         opt.value = y;
         opt.textContent = y;
-        if (y === anioActivo) opt.selected = true;
+        if (y === anioActual) opt.selected = true;
         selectAnio.appendChild(opt);
       }
     }
 
     function seleccionarMesAno() {
-      mesActivo = Number(document.getElementById("selectMes").value);
-      anioActivo = Number(document.getElementById("selectAnio").value);
-      renderizar();
+      mesActual = parseInt(document.getElementById("selectMes").value, 10);
+      anioActual = parseInt(document.getElementById("selectAnio").value, 10);
+      renderizarTodo();
     }
 
-    /**
-     * =========================================================================
-     * CONSTRUCTOR DE GRILLA DE MES (REUTILIZABLE)
-     * =========================================================================
-     */
-    function construirTarjetaMes(y, m, esPanorama) {
-      const tarjeta = document.createElement("div");
-      tarjeta.className = esPanorama ? "panorama-month-card" : "single-month-card";
+    /* --------------------------------------------------------------------------
+       CONSTRUCCIÓN DE TARJETAS DE MES (ESTRICTA SIMETRÍA Y PROTECCIÓN CSS)
+       -------------------------------------------------------------------------- */
+    function construirTarjetaMes(y, m, esModoPanorama) {
+      const card = document.createElement("div");
+      card.className = "month-card-lux" + (esModoPanorama ? "" : " single-mode-view");
 
-      const festivosMapa = obtenerFestivosColombia(y);
-      const totalDiasMes = new Date(y, m + 1, 0).getDate();
-      const hoyStr = claveFecha(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate());
+      const festivos = obtenerFestivosColombia(y);
+      const totalDias = new Date(y, m + 1, 0).getDate();
+      const hoyStr = formaterClave(fechaSistema.getFullYear(), fechaSistema.getMonth(), fechaSistema.getDate());
 
-      // Contar días hábiles
+      // Contar días hábiles en este mes
       let habilesMes = 0;
-      for (let d = 1; d <= totalDiasMes; d++) {
+      for (let d = 1; d <= totalDias; d++) {
         const f = new Date(y, m, d);
         const ds = f.getDay();
-        const k = claveFecha(y, m, d);
-        if (ds !== 0 && ds !== 6 && !festivosMapa[k]) habilesMes++;
+        const k = formaterClave(y, m, d);
+        if (ds !== 0 && ds !== 6 && !festivos[k]) {
+          habilesMes++;
+        }
       }
 
-      // Cabecera del Mes
-      if (esPanorama) {
-        const headerDiv = document.createElement("div");
-        headerDiv.className = "panorama-month-header";
-        headerDiv.innerHTML = `
-          <h3>
-            <span>${MESES[m]} ${y}</span>
-          </h3>
-          <span class="month-stats-badge">${habilesMes} días hábiles</span>
-        `;
-        tarjeta.appendChild(headerDiv);
-      } else {
-        const headerDiv = document.createElement("div");
-        headerDiv.className = "single-month-header";
-        headerDiv.innerHTML = `
-          <h2>${MESES[m]} ${y}</h2>
-          <span class="badge-count" style="font-size:12px; padding:3px 9px;">${habilesMes} días hábiles laborables</span>
-        `;
-        tarjeta.appendChild(headerDiv);
-      }
+      // 1. Encabezado del mes
+      const header = document.createElement("div");
+      header.className = "month-card-header";
+      header.innerHTML = `
+        <div class="month-title-group">
+          <span class="month-name-text">${NOMBRES_MESES[m]}</span>
+          <span class="month-year-badge">${y}</span>
+        </div>
+        <span class="month-habiles-chip">${habilesMes} hábiles</span>
+      `;
+      card.appendChild(header);
 
-      // Cabecera Lun - Dom
-      const diasHeader = document.createElement("div");
-      diasHeader.className = "weekdays-header";
-      NOMBRES_DIAS_SEMANA.forEach((dia, idx) => {
-        const dDiv = document.createElement("div");
-        dDiv.textContent = dia;
-        dDiv.className = "weekday-title" + (idx >= 5 ? " weekend" : "");
-        diasHeader.appendChild(dDiv);
+      // 2. Fila de nombres de día (Lun a Dom)
+      const weekdaysRow = document.createElement("div");
+      weekdaysRow.className = "weekdays-header-row";
+      DIAS_SEMANA.forEach((dia, idx) => {
+        const col = document.createElement("div");
+        col.className = "weekday-label" + (idx >= 5 ? " is-weekend" : "");
+        col.textContent = dia;
+        weekdaysRow.appendChild(col);
       });
-      tarjeta.appendChild(diasHeader);
+      card.appendChild(weekdaysRow);
 
-      // Grilla de Celdas
-      const grilla = document.createElement("div");
-      grilla.className = "days-grid";
+      // 3. Grilla de celdas de días
+      const daysGrid = document.createElement("div");
+      daysGrid.className = "month-days-grid";
 
-      // Celdas vacías de desfase inicial
+      // Desplazamiento inicial (Lunes = 0, ..., Domingo = 6)
       const primerDiaObj = new Date(y, m, 1);
       const offsetInicio = (primerDiaObj.getDay() + 6) % 7;
 
       for (let i = 0; i < offsetInicio; i++) {
-        const vacia = document.createElement("div");
-        vacia.className = "day-cell empty";
-        grilla.appendChild(vacia);
+        const empty = document.createElement("div");
+        empty.className = "day-cell empty-day";
+        daysGrid.appendChild(empty);
       }
 
       // Celdas de días
-      for (let dia = 1; dia <= totalDiasMes; dia++) {
-        const k = claveFecha(y, m, dia);
+      for (let dia = 1; dia <= totalDias; dia++) {
+        const k = formaterClave(y, m, dia);
         const fechaDia = new Date(y, m, dia);
         const diaSemanaNum = fechaDia.getDay();
         const esFinSemana = (diaSemanaNum === 0 || diaSemanaNum === 6);
-        const nombreFestivo = festivosMapa[k] || null;
+        const nombreFestivo = festivos[k] || null;
 
-        const infoAsignada = agendaDias[k] || null;
-        const estadoAsignado = infoAsignada ? infoAsignada.estado : null;
+        const info = datosCalendario[k] || null;
+        const estado = info ? info.estado : null;
 
-        const celda = document.createElement("div");
-        celda.className = "day-cell";
+        const cell = document.createElement("div");
+        cell.className = "day-cell";
 
-        if (k === hoyStr) celda.classList.add("today");
-        if (esFinSemana) celda.classList.add("weekend");
-        if (nombreFestivo) celda.classList.add("is-holiday");
+        if (k === hoyStr) cell.classList.add("is-today");
+        if (esFinSemana) cell.classList.add("is-weekend");
+        if (nombreFestivo) cell.classList.add("is-holiday");
 
-        if (estadoAsignado) {
-          celda.classList.add(`status-${estadoAsignado}`);
-        }
+        // Clases de estado
+        if (estado === "habilitado") cell.classList.add("status-hab");
+        if (estado === "bloqueado") cell.classList.add("status-bloq");
+        if (estado === "capacitacion") cell.classList.add("status-cap");
+        if (estado === "compensatorio") cell.classList.add("status-comp");
 
-        // Fila superior (número de día y tag Hoy)
-        let topRowHTML = `
-          <div class="day-top-row">
+        // HTML superior: Número de día
+        let topHTML = `
+          <div class="day-cell-top">
             <span class="day-number">${dia}</span>
-            ${k === hoyStr ? '<span class="today-pill">Hoy</span>' : ''}
+            ${k === hoyStr ? '<span class="today-ring-tag">Hoy</span>' : ''}
           </div>
         `;
 
-        // Contenedor de Badges
-        let badgesHTML = '<div class="day-badges-container">';
+        // HTML inferior: Micro-etiquetas (protegidas con ellipsis contra deformación)
+        let badgesHTML = '<div class="day-badges-stack">';
 
         if (nombreFestivo) {
-          badgesHTML += `<div class="holiday-badge" title="Festivo: ${nombreFestivo}">🇨🇴 ${nombreFestivo}</div>`;
+          badgesHTML += `
+            <div class="festivo-mini-badge" title="Festivo Oficial: ${nombreFestivo}">
+              <span class="fest-flag">🇨🇴</span>
+              <span class="fest-text">${nombreFestivo}</span>
+            </div>
+          `;
         }
 
-        if (estadoAsignado === "habilitado") {
-          badgesHTML += `<div class="status-badge"><span class="badge-dot"></span>Habilitado</div>`;
-        } else if (estadoAsignado === "bloqueado") {
-          badgesHTML += `<div class="status-badge"><span class="badge-dot"></span>Bloqueado</div>`;
-        } else if (estadoAsignado === "capacitacion") {
-          const tema = (infoAsignada && infoAsignada.detalle) ? infoAsignada.detalle : "Capacitación";
-          badgesHTML += `<div class="status-badge" title="${tema}"><span class="badge-dot"></span>${tema}</div>`;
+        if (estado === "habilitado") {
+          badgesHTML += `
+            <div class="status-mini-pill" title="Día Habilitado">
+              <span class="status-glow"></span>
+              <span class="status-text">Habilitado</span>
+            </div>
+          `;
+        } else if (estado === "bloqueado") {
+          badgesHTML += `
+            <div class="status-mini-pill" title="Día Bloqueado">
+              <span class="status-glow"></span>
+              <span class="status-text">Bloqueado</span>
+            </div>
+          `;
+        } else if (estado === "compensatorio") {
+          badgesHTML += `
+            <div class="status-mini-pill" title="Día Compensatorio">
+              <span class="status-glow"></span>
+              <span class="status-text">Compensatorio</span>
+            </div>
+          `;
+        } else if (estado === "capacitacion") {
+          const tema = (info && info.detalle) ? info.detalle : "Capacitación";
+          badgesHTML += `
+            <div class="status-mini-pill" title="Capacitación: ${tema}">
+              <span class="status-glow"></span>
+              <span class="status-text">${tema}</span>
+            </div>
+          `;
         }
 
         badgesHTML += '</div>';
 
-        celda.innerHTML = topRowHTML + badgesHTML;
+        cell.innerHTML = topHTML + badgesHTML;
 
-        // Interacción de clic
-        celda.onclick = () => {
-          manejarClicDia(k, dia, m, y);
+        // Clic para alternar / marcar
+        cell.onclick = () => {
+          manejarClicCelda(k, dia, m, y);
         };
 
-        grilla.appendChild(celda);
+        daysGrid.appendChild(cell);
       }
 
-      tarjeta.appendChild(grilla);
-      return tarjeta;
+      card.appendChild(daysGrid);
+      return card;
     }
 
-    /**
-     * =========================================================================
-     * RENDERIZADO GLOBAL
-     * =========================================================================
-     */
-    function renderizar() {
-      sincronizarSelectores();
-      renderizarVistasCalendario();
-      actualizarEstadisticasYAgenda();
-      guardarEnLocalStorage();
-    }
-
-    function renderizarVistasCalendario() {
-      const seccion = document.getElementById("seccionCalendario");
-      seccion.innerHTML = "";
-
-      if (tipoVista === "mensual") {
-        seccion.appendChild(construirTarjetaMes(anioActivo, mesActivo, false));
-      } else {
-        // VISTA PANORAMA: 4 MESES (Septiembre, Octubre, Noviembre, Diciembre)
-        const contenedorPanorama = document.createElement("div");
-        contenedorPanorama.className = "panorama-grid";
-
-        MESES_PANORAMA.forEach(m => {
-          contenedorPanorama.appendChild(construirTarjetaMes(anioActivo, m, true));
-        });
-
-        seccion.appendChild(contenedorPanorama);
-      }
-    }
-
-    function manejarClicDia(key, dia, m, y) {
-      if (modoActivo === "limpiar") {
-        delete agendaDias[key];
-        renderizar();
+    /* --------------------------------------------------------------------------
+       INTERACCIÓN DE CLIC EN DÍAS
+       -------------------------------------------------------------------------- */
+    function manejarClicCelda(clave, dia, m, y) {
+      if (modoMarcado === "limpiar") {
+        delete datosCalendario[clave];
+        renderizarTodo();
         return;
       }
 
-      if (modoActivo === "capacitacion") {
-        abrirModalCapacitacion(key, dia, m, y);
+      if (modoMarcado === "capacitacion") {
+        abrirModalCapacitacion(clave, dia, m, y);
         return;
       }
 
-      agendaDias[key] = {
-        estado: modoActivo
+      datosCalendario[clave] = {
+        estado: modoMarcado
       };
 
-      renderizar();
+      renderizarTodo();
     }
 
-    function abrirModalCapacitacion(key, dia, m, y) {
-      fechaPendienteCapacitacion = key;
-      const temaActual = (agendaDias[key] && agendaDias[key].detalle) ? agendaDias[key].detalle : "";
-      document.getElementById("inputTemaCapacitacion").value = temaActual;
-      document.getElementById("modalFechaTexto").textContent = `${dia} de ${MESES[m]} de ${y}`;
+    /* --------------------------------------------------------------------------
+       MODAL DE CAPACITACIÓN
+       -------------------------------------------------------------------------- */
+    function abrirModalCapacitacion(clave, dia, m, y) {
+      fechaModalPendiente = clave;
+      const actual = datosCalendario[clave] || {};
+      document.getElementById("modalFechaTexto").textContent = `${dia} de ${NOMBRES_MESES[m]} de ${y}`;
+      document.getElementById("inputTemaCapacitacion").value = actual.detalle || "";
+      document.getElementById("inputHorarioCapacitacion").value = actual.horario || "";
+
       document.getElementById("modalCapacitacion").classList.add("open");
-      setTimeout(() => document.getElementById("inputTemaCapacitacion").focus(), 100);
+      setTimeout(() => document.getElementById("inputTemaCapacitacion").focus(), 150);
     }
 
     function cerrarModalCapacitacion() {
-      fechaPendienteCapacitacion = null;
       document.getElementById("modalCapacitacion").classList.remove("open");
+      fechaModalPendiente = null;
     }
 
-    function guardarTemaCapacitacion() {
-      if (!fechaPendienteCapacitacion) return;
-      const tema = document.getElementById("inputTemaCapacitacion").value.trim() || "Capacitación";
+    function asignarTemaRapido(tema) {
+      document.getElementById("inputTemaCapacitacion").value = tema;
+    }
 
-      agendaDias[fechaPendienteCapacitacion] = {
+    function guardarCapacitacionModal() {
+      if (!fechaModalPendiente) return;
+
+      const tema = document.getElementById("inputTemaCapacitacion").value.trim() || "Capacitación";
+      const horario = document.getElementById("inputHorarioCapacitacion").value.trim() || "";
+
+      datosCalendario[fechaModalPendiente] = {
         estado: "capacitacion",
-        detalle: tema
+        detalle: tema,
+        horario: horario
       };
 
       cerrarModalCapacitacion();
-      renderizar();
+      renderizarTodo();
+      mostrarToast(`Capacitación asignada: "${tema}"`, "🟣");
     }
 
-    function limpiarPeriodoVisible() {
-      let count = 0;
-      const mesesALimpiar = (tipoVista === "panorama") ? MESES_PANORAMA : [mesActivo];
+    /* --------------------------------------------------------------------------
+       RENDERIZADO GLOBAL DE VISTAS Y MÉTRICAS
+       -------------------------------------------------------------------------- */
+    function renderizarTodo() {
+      sincronizarSelectores();
+      renderizarSuperficie();
+      actualizarMetricasYAgenda();
+      guardarEnStorage();
+    }
 
-      mesesALimpiar.forEach(m => {
-        const prefijo = `${anioActivo}-${pad2(m + 1)}`;
-        Object.keys(agendaDias).forEach(k => {
-          if (k.startsWith(prefijo)) {
-            delete agendaDias[k];
-            count++;
-          }
+    function renderizarSuperficie() {
+      const container = document.getElementById("contenedorCalendarios");
+      container.innerHTML = "";
+
+      if (modoVista === "mensual") {
+        container.appendChild(construirTarjetaMes(anioActual, mesActual, false));
+      } else {
+        const quadGrid = document.createElement("div");
+        quadGrid.className = "panorama-quad-grid";
+
+        MESES_PANORAMA.forEach(m => {
+          quadGrid.appendChild(construirTarjetaMes(anioActual, m, true));
         });
-      });
 
-      renderizar();
-      mostrarToast(count > 0 ? `Se limpiaron ${count} días del periodo.` : "No había días marcados.", "🧹");
+        container.appendChild(quadGrid);
+      }
     }
 
-    /**
-     * =========================================================================
-     * ESTADÍSTICAS & AGENDA DEL PANEL LATERAL
-     * =========================================================================
-     */
-    function actualizarEstadisticasYAgenda() {
-      const festivosMapa = obtenerFestivosColombia(anioActivo);
-      const mesesAComputar = (tipoVista === "panorama") ? MESES_PANORAMA : [mesActivo];
+    function filtrarAgenda(tipo) {
+      filtroAgendaActivo = tipo;
+      document.getElementById("tabFiltroTodos").classList.toggle("active", tipo === "todos");
+      document.getElementById("tabFiltroFestivos").classList.toggle("active", tipo === "festivos");
+      document.getElementById("tabFiltroCapacitaciones").classList.toggle("active", tipo === "capacitaciones");
+      actualizarMetricasYAgenda();
+    }
 
-      let countHabilesTotal = 0;
-      let countHabilitados = 0;
-      let countBloqueados = 0;
-      let countCapacitaciones = 0;
-      let countFestivos = 0;
+    function eliminarRegistroAgenda(clave) {
+      delete datosCalendario[clave];
+      renderizarTodo();
+      mostrarToast("Elemento eliminado de la agenda", "🗑️");
+    }
 
-      const listaCapacitaciones = [];
-      const listaFestivos = [];
+    function actualizarMetricasYAgenda() {
+      const festivos = obtenerFestivosColombia(anioActual);
 
-      mesesAComputar.forEach(m => {
-        const totalDias = new Date(anioActivo, m + 1, 0).getDate();
+      // Calcular rango visible
+      const mesesVisibles = modoVista === "panorama" ? MESES_PANORAMA : [mesActual];
 
-        for (let dia = 1; dia <= totalDias; dia++) {
-          const k = claveFecha(anioActivo, m, dia);
-          const fechaDia = new Date(anioActivo, m, dia);
-          const diaSemana = fechaDia.getDay();
-          const esFinSemana = (diaSemana === 0 || diaSemana === 6);
-          const festivo = festivosMapa[k] || null;
+      let countHab = 0;
+      let countBloq = 0;
+      let countCap = 0;
+      let countComp = 0;
+      let countFest = 0;
 
-          if (!esFinSemana && !festivo) countHabilesTotal++;
-          if (festivo) {
-            countFestivos++;
-            listaFestivos.push({
-              key: k,
-              dia,
-              mes: m,
-              nombre: festivo,
-              diaSemanaNombre: DIAS_SEMANA_COMPLETOS[diaSemana]
+      const eventosLista = [];
+
+      // Recorrer meses visibles
+      mesesVisibles.forEach(m => {
+        const totalDias = new Date(anioActual, m + 1, 0).getDate();
+        for (let d = 1; d <= totalDias; d++) {
+          const k = formaterClave(anioActual, m, d);
+          const fechaObj = new Date(anioActual, m, d);
+          const esFestivo = festivos[k] || null;
+          const info = datosCalendario[k] || null;
+
+          if (esFestivo) countFest++;
+
+          if (info) {
+            if (info.estado === "habilitado") countHab++;
+            if (info.estado === "bloqueado") countBloq++;
+            if (info.estado === "capacitacion") countCap++;
+            if (info.estado === "compensatorio") countComp++;
+          }
+
+          // Armar eventos para la agenda
+          if (esFestivo) {
+            eventosLista.push({
+              clave: k,
+              fecha: fechaObj,
+              tipo: "festivo",
+              titulo: esFestivo,
+              subtitulo: "Festivo Oficial (Ley Emiliani)",
+              esEditable: false
             });
           }
 
-          const info = agendaDias[k];
           if (info) {
-            if (info.estado === "habilitado") countHabilitados++;
-            if (info.estado === "bloqueado") countBloqueados++;
-            if (info.estado === "capacitacion") {
-              countCapacitaciones++;
-              listaCapacitaciones.push({
-                key: k,
-                dia,
-                mes: m,
-                tema: info.detalle || "Capacitación",
-                diaSemanaNombre: DIAS_SEMANA_COMPLETOS[diaSemana]
-              });
+            let titulo = "";
+            let subtitulo = "";
+            let tipo = info.estado;
+
+            if (info.estado === "habilitado") {
+              titulo = "Día Habilitado";
+              subtitulo = "Disponibilidad confirmada";
+            } else if (info.estado === "bloqueado") {
+              titulo = "Día Bloqueado";
+              subtitulo = "No disponible / Cierre";
+            } else if (info.estado === "compensatorio") {
+              titulo = "Día Compensatorio";
+              subtitulo = "Descanso legal compensado";
+            } else if (info.estado === "capacitacion") {
+              titulo = info.detalle || "Capacitación";
+              subtitulo = info.horario ? `Horario: ${info.horario}` : "Jornada formativa programada";
             }
+
+            eventosLista.push({
+              clave: k,
+              fecha: fechaObj,
+              tipo: tipo,
+              titulo: titulo,
+              subtitulo: subtitulo,
+              esEditable: true
+            });
           }
         }
       });
 
-      // Actualizar KPIs
-      document.getElementById("kpiHabilitados").textContent = countHabilitados;
-      document.getElementById("kpiBloqueados").textContent = countBloqueados;
-      document.getElementById("kpiCapacitaciones").textContent = countCapacitaciones;
-      document.getElementById("kpiFestivos").textContent = countFestivos;
+      // Actualizar contadores en la barra
+      document.getElementById("kpiHabilitados").textContent = countHab;
+      document.getElementById("kpiBloqueados").textContent = countBloq;
+      document.getElementById("kpiCapacitaciones").textContent = countCap;
+      document.getElementById("kpiFestivos").textContent = countFest;
 
-      const pctHab = countHabilesTotal > 0 ? Math.round((countHabilitados / countHabilesTotal) * 100) : 0;
-      document.getElementById("kpiHabilitadosSub").textContent = `${pctHab}% de los días hábiles`;
-      document.getElementById("kpiFestivosSub").textContent = (tipoVista === "panorama") ? "Sep — Dic 2026" : `${MESES[mesActivo]} ${anioActivo}`;
+      // Ordenar eventos cronológicamente
+      eventosLista.sort((a, b) => a.fecha - b.fecha);
 
-      // Sidebar: Contadores
-      document.getElementById("badgeTotalEventos").textContent = `${listaCapacitaciones.length + listaFestivos.length} eventos`;
-      document.getElementById("countCapacitacionesSide").textContent = listaCapacitaciones.length;
-      document.getElementById("countFestivosSide").textContent = listaFestivos.length;
-
-      // Sidebar: Lista Capacitaciones
-      const contenedorCapSide = document.getElementById("listaCapacitacionesSide");
-      contenedorCapSide.innerHTML = "";
-      if (listaCapacitaciones.length === 0) {
-        contenedorCapSide.innerHTML = `<div class="empty-state">Sin capacitaciones programadas en este periodo.</div>`;
-      } else {
-        listaCapacitaciones.forEach(item => {
-          const div = document.createElement("div");
-          div.className = "event-item-card cap";
-          div.innerHTML = `
-            <div class="event-info">
-              <strong>${item.tema}</strong>
-              <span>${item.diaSemanaNombre}, ${item.dia} de ${MESES[item.mes]}</span>
-            </div>
-            <button class="btn-delete-event" onclick="eliminarEvento('${item.key}')" title="Quitar capacitación">✕</button>
-          `;
-          contenedorCapSide.appendChild(div);
-        });
+      // Filtrar según pestaña
+      let eventosFiltrados = eventosLista;
+      if (filtroAgendaActivo === "festivos") {
+        eventosFiltrados = eventosLista.filter(e => e.tipo === "festivo");
+      } else if (filtroAgendaActivo === "capacitaciones") {
+        eventosFiltrados = eventosLista.filter(e => e.tipo === "capacitacion");
       }
 
-      // Sidebar: Lista Festivos
-      const contenedorFestSide = document.getElementById("listaFestivosSide");
-      contenedorFestSide.innerHTML = "";
-      if (listaFestivos.length === 0) {
-        contenedorFestSide.innerHTML = `<div class="empty-state">No hay festivos en este periodo.</div>`;
-      } else {
-        listaFestivos.forEach(item => {
-          const div = document.createElement("div");
-          div.className = "event-item-card fest";
-          div.innerHTML = `
-            <div class="event-info">
-              <strong>🇨🇴 ${item.nombre}</strong>
-              <span>${item.diaSemanaNombre}, ${item.dia} de ${MESES[item.mes]}</span>
-            </div>
-          `;
-          contenedorFestSide.appendChild(div);
-        });
-      }
-    }
+      document.getElementById("badgeTotalEventos").textContent = `${eventosFiltrados.length} items`;
 
-    function eliminarEvento(key) {
-      delete agendaDias[key];
-      renderizar();
-    }
+      // Renderizar items de la agenda
+      const scrollContainer = document.getElementById("listaAgendaScroll");
+      scrollContainer.innerHTML = "";
 
-    /**
-     * =========================================================================
-     * EXPORTACIÓN A EXCEL (SHEETJS)
-     * =========================================================================
-     */
-    function exportarExcel() {
-      if (typeof XLSX === "undefined") {
-        alert("La librería de Excel aún no ha terminado de cargar. Por favor intenta de nuevo en un instante.");
+      if (eventosFiltrados.length === 0) {
+        scrollContainer.innerHTML = `
+          <div style="text-align: center; padding: 24px 10px; color: #94a3b8; font-size: 12px;">
+            <div style="font-size: 24px; margin-bottom: 6px;">🍃</div>
+            No hay eventos registrados en este filtro.
+          </div>
+        `;
         return;
       }
 
-      const libro = XLSX.utils.book_new();
-      const festivosMapa = obtenerFestivosColombia(anioActivo);
-      const mesesAExportar = (tipoVista === "panorama") ? MESES_PANORAMA : [mesActivo];
+      eventosFiltrados.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "event-card-item";
 
-      // Si es panorama, agregar primero una hoja de resumen consolidado
-      if (tipoVista === "panorama") {
-        const resumenRows = [
-          [`RESUMEN CONSOLIDADO PANORAMA CUATRIMESTRAL (SEP — DIC ${anioActivo})`],
-          ["República de Colombia • Calendario Operativo y Disponibilidad"],
-          [],
-          ["Mes", "Días Hábiles", "Habilitados", "Bloqueados", "Capacitaciones", "Festivos"]
-        ];
+        const diaNum = item.fecha.getDate();
+        const mesAbr = ABREV_MESES[item.fecha.getMonth()];
+        const diaNombre = DIAS_COMPLETOS[item.fecha.getDay()];
 
-        mesesAExportar.forEach(m => {
-          const totalDias = new Date(anioActivo, m + 1, 0).getDate();
-          let hab = 0, habActivos = 0, bloq = 0, cap = 0, fest = 0;
+        let badgeTipoHTML = "";
+        if (item.tipo === "festivo") badgeTipoHTML = '<span class="event-badge-pill event-badge-festivo">🇨🇴 Festivo</span>';
+        else if (item.tipo === "capacitacion") badgeTipoHTML = '<span class="event-badge-pill event-badge-cap">🟣 Capacitación</span>';
+        else if (item.tipo === "habilitado") badgeTipoHTML = '<span class="event-badge-pill event-badge-hab">🟢 Habilitado</span>';
+        else if (item.tipo === "bloqueado") badgeTipoHTML = '<span class="event-badge-pill event-badge-bloq">🔴 Bloqueado</span>';
+        else if (item.tipo === "compensatorio") badgeTipoHTML = '<span class="event-badge-pill event-badge-comp">🟠 Compensatorio</span>';
 
-          for (let d = 1; d <= totalDias; d++) {
-            const k = claveFecha(anioActivo, m, d);
-            const ds = new Date(anioActivo, m, d).getDay();
-            const esFin = (ds === 0 || ds === 6);
-            const esFest = festivosMapa[k];
+        card.innerHTML = `
+          <div class="event-date-box">
+            <span class="event-date-day">${diaNum}</span>
+            <span class="event-date-month">${mesAbr}</span>
+          </div>
+          <div class="event-info-col">
+            <div class="event-title-line" title="${item.titulo}">${item.titulo}</div>
+            <div class="event-desc-line">
+              ${badgeTipoHTML}
+              <span>• ${diaNombre}</span>
+            </div>
+            ${item.subtitulo ? `<div style="font-size: 10px; color: #64748b; margin-top: 2px;">${item.subtitulo}</div>` : ''}
+          </div>
+          ${item.esEditable ? `
+            <button class="btn-delete-event" onclick="eliminarRegistroAgenda('${item.clave}')" title="Quitar programación">✕</button>
+          ` : ''}
+        `;
 
-            if (!esFin && !esFest) hab++;
-            if (esFest) fest++;
-
-            const info = agendaDias[k];
-            if (info) {
-              if (info.estado === "habilitado") habActivos++;
-              if (info.estado === "bloqueado") bloq++;
-              if (info.estado === "capacitacion") cap++;
-            }
-          }
-
-          resumenRows.push([MESES[m], hab, habActivos, bloq, cap, fest]);
-        });
-
-        const hojaResumen = XLSX.utils.aoa_to_sheet(resumenRows);
-        hojaResumen["!cols"] = [{ wch: 18 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 16 }, { wch: 14 }];
-        XLSX.utils.book_append_sheet(libro, hojaResumen, "Resumen Cuatrimestre");
-      }
-
-      // Hojas de cada mes
-      mesesAExportar.forEach(m => {
-        const totalDias = new Date(anioActivo, m + 1, 0).getDate();
-        const filas = [
-          [`PROGRAMACIÓN OPERATIVA & DISPONIBILIDAD - ${MESES[m].toUpperCase()} ${anioActivo}`],
-          ["República de Colombia • Festivos Oficiales Ley 51 de 1983"],
-          [],
-          ["Fecha (AAAA-MM-DD)", "Día Semana", "Estado Operativo", "Festivo Colombia", "Detalle / Tema Capacitación"]
-        ];
-
-        for (let dia = 1; dia <= totalDias; dia++) {
-          const k = claveFecha(anioActivo, m, dia);
-          const fechaDia = new Date(anioActivo, m, dia);
-          const diaSemana = DIAS_SEMANA_COMPLETOS[fechaDia.getDay()];
-          const esFinSemana = (fechaDia.getDay() === 0 || fechaDia.getDay() === 6);
-          const festivo = festivosMapa[k] || "";
-
-          const info = agendaDias[k];
-          let estadoStr = "Ordinario";
-          let detalleStr = "";
-
-          if (esFinSemana) estadoStr = "Fin de Semana";
-          if (festivo) estadoStr = "Festivo Nacional";
-
-          if (info) {
-            if (info.estado === "habilitado") estadoStr = "Habilitado (Disponible)";
-            if (info.estado === "bloqueado") estadoStr = "Bloqueado (No disponible)";
-            if (info.estado === "capacitacion") {
-              estadoStr = "Capacitación";
-              detalleStr = info.detalle || "Capacitación programada";
-            }
-          }
-
-          filas.push([k, diaSemana, estadoStr, festivo, detalleStr]);
-        }
-
-        const hojaMes = XLSX.utils.aoa_to_sheet(filas);
-        hojaMes["!cols"] = [{ wch: 18 }, { wch: 16 }, { wch: 26 }, { wch: 30 }, { wch: 36 }];
-        XLSX.utils.book_append_sheet(libro, hojaMes, MESES[m].substring(0, 10));
+        scrollContainer.appendChild(card);
       });
-
-      const nombreArchivo = (tipoVista === "panorama")
-        ? `calendario_panorama_sep_dic_${anioActivo}.xlsx`
-        : `calendario_operativo_${MESES[mesActivo].toLowerCase()}_${anioActivo}.xlsx`;
-
-      XLSX.writeFile(libro, nombreArchivo);
     }
 
-    // Arranque
-    cargarDesdeLocalStorage();
-    cargarDesdeURL();
-    cambiarTipoVista("panorama"); // Arrancar directamente en vista Panorama solicitada
+    /* --------------------------------------------------------------------------
+       EXPORTACIÓN A EXCEL MULTI-HOJA CON SHEETJS
+       -------------------------------------------------------------------------- */
+    function exportarAExcel() {
+      if (typeof XLSX === "undefined") {
+        alert("La librería de exportación a Excel se está cargando. Intenta de nuevo en 3 segundos.");
+        return;
+      }
+
+      const festivos = obtenerFestivosColombia(anioActual);
+      const mesesAExportar = modoVista === "panorama" ? MESES_PANORAMA : [mesActual];
+
+      // Hoja 1: Detalle día por día
+      const filasDetalle = [
+        ["FECHA", "AÑO", "MES", "DÍA", "DÍA SEMANA", "ESTADO OPERATIVO", "DETALLE / CAPACITACIÓN", "FESTIVO OFICIAL"]
+      ];
+
+      // Hoja 2: Resumen Cuatrimestral
+      const filasResumen = [
+        ["RESUMEN OPERATIVO - CALENDARIO COLOMBIA", `${anioActual}`],
+        ["Generado el:", new Date().toLocaleString()],
+        [],
+        ["MES", "DÍAS HÁBILES REALES", "HABILITADOS", "BLOQUEADOS", "CAPACITACIONES", "COMPENSATORIOS", "FESTIVOS"]
+      ];
+
+      mesesAExportar.forEach(m => {
+        const totalDias = new Date(anioActual, m + 1, 0).getDate();
+        let habilesMes = 0;
+        let habs = 0, bloqs = 0, caps = 0, comps = 0, fests = 0;
+
+        for (let d = 1; d <= totalDias; d++) {
+          const k = formaterClave(anioActual, m, d);
+          const fObj = new Date(anioActual, m, d);
+          const ds = fObj.getDay();
+          const esF = festivos[k] || "";
+          const info = datosCalendario[k] || null;
+
+          if (ds !== 0 && ds !== 6 && !esF) habilesMes++;
+          if (esF) fests++;
+
+          let estadoTexto = "Normal / Hábil";
+          let detalleTexto = "";
+
+          if (info) {
+            if (info.estado === "habilitado") { estadoTexto = "Habilitado"; habs++; }
+            if (info.estado === "bloqueado") { estadoTexto = "Bloqueado"; bloqs++; }
+            if (info.estado === "compensatorio") { estadoTexto = "Compensatorio"; comps++; }
+            if (info.estado === "capacitacion") {
+              estadoTexto = "Capacitación";
+              detalleTexto = info.detalle || "Capacitación";
+              if (info.horario) detalleTexto += ` (${info.horario})`;
+              caps++;
+            }
+          }
+
+          filasDetalle.push([
+            k,
+            anioActual,
+            NOMBRES_MESES[m],
+            d,
+            DIAS_COMPLETOS[ds],
+            estadoTexto,
+            detalleTexto,
+            esF
+          ]);
+        }
+
+        filasResumen.push([
+          NOMBRES_MESES[m],
+          habilesMes,
+          habs,
+          bloqs,
+          caps,
+          comps,
+          fests
+        ]);
+      });
+
+      const wb = XLSX.utils.book_new();
+
+      const wsResumen = XLSX.utils.aoa_to_sheet(filasResumen);
+      XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen Operativo");
+
+      const wsDetalle = XLSX.utils.aoa_to_sheet(filasDetalle);
+      XLSX.utils.book_append_sheet(wb, wsDetalle, "Programación de Días");
+
+      const nombreArchivo = `Calendario_Operativo_Colombia_${anioActual}_${modoVista}.xlsx`;
+      XLSX.writeFile(wb, nombreArchivo);
+
+      mostrarToast("Archivo Excel descargado exitosamente", "📊");
+    }
+
+    /* --------------------------------------------------------------------------
+       INICIALIZACIÓN AL CARGAR LA PÁGINA
+       -------------------------------------------------------------------------- */
+    window.addEventListener("DOMContentLoaded", () => {
+      cargarDeStorage();
+      cargarDesdeHashURL();
+      renderizarTodo();
+    });
+
+    window.addEventListener("hashchange", () => {
+      cargarDesdeHashURL();
+      renderizarTodo();
+    });
   </script>
 </body>
 </html>
