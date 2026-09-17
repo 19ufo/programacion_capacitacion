@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendario Operativo & Disponibilidad Colombia</title>
+  <meta name="description" content="Calendario interactivo para programar días habilitados, bloqueados, capacitaciones y festivos oficiales en Colombia. Listo para compartir vía web." />
+
+  <!-- Tipografías Modernas de Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- SheetJS para exportación a Excel opcional -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       VARIABLES Y TEMA DE DISEÑO (ESTILO MINIMALISTA & ELEGANTE 2026)
+       ========================================================================== */
+    :root {
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #ffffff;
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      /* Estado Habilitado (Verde Esmeralda Pastel) */
+      --hab-bg: #ecfdf5;
+      --hab-border: #a7f3d0;
+      --hab-text: #065f46;
+      --hab-dot: #10b981;
+      --hab-badge: #d1fae5;
+
+      /* Estado Bloqueado (Rojo Rosa Pastel) */
+      --bloq-bg: #fff1f2;
+      --bloq-border: #fecdd3;
+      --bloq-text: #9f1239;
+      --bloq-dot: #f43f5e;
+      --bloq-badge: #ffe4e6;
+
+      /* Estado Capacitación (Violeta / Púrpura Pastel) */
+      --cap-bg: #f5f3ff;
+      --cap-border: #ddd6fe;
+      --cap-text: #5b21b6;
+      --cap-dot: #8b5cf6;
+      --cap-badge: #ede9fe;
+
+      /* Festivos de Colombia (Ámbar / Naranja Pastel) */
+      --fest-bg: #fffbeb;
+      --fest-border: #fde68a;
+      --fest-text: #92400e;
+      --fest-dot: #f59e0b;
+      --fest-badge: #fef3c7;
+
+      /* Fin de Semana */
+      --weekend-bg: #f8fafc;
+      --weekend-text: #94a3b8;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-page);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.02) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.025) 0%, transparent 40%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 40px;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .app-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* CABECERA PRINCIPAL */
+    .header-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
+    }
+
+    .brand-info h1 {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .flag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* NAVEGACIÓN DE FECHAS (MES Y AÑO) */
+    .nav-date-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      padding: 4px 6px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    .btn-nav-arrow {
+      background: white;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: bold;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-nav-arrow:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .select-clean {
+      background: transparent;
+      border: none;
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 4px 8px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .select-clean:hover {
+      color: #2563eb;
+    }
+
+    /* BOTONES DE ACCIÓN (COMPARTIR, EXPORTAR) */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      font-family: var(--font-body);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn-share {
+      background: #0f172a;
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-share:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: white;
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    /* BARRA DE HERRAMIENTAS DE PINTADO (MODOS DE CLIC) */
+    .toolbar-modes {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mode-label-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .mode-pills-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .mode-pill .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* Pill Habilitado */
+    .mode-pill.pill-habilitado {
+      background: #f0fdf4;
+      color: var(--hab-text);
+      border-color: #bbf7d0;
+    }
+    .mode-pill.pill-habilitado .pill-dot { background: var(--hab-dot); }
+    .mode-pill.pill-habilitado.active {
+      background: #dcfce7;
+      border-color: #10b981;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+
+    /* Pill Bloqueado */
+    .mode-pill.pill-bloqueado {
+      background: #fff1f2;
+      color: var(--bloq-text);
+      border-color: #fecdd3;
+    }
+    .mode-pill.pill-bloqueado .pill-dot { background: var(--bloq-dot); }
+    .mode-pill.pill-bloqueado.active {
+      background: #ffe4e6;
+      border-color: #f43f5e;
+      box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
+    }
+
+    /* Pill Capacitación */
+    .mode-pill.pill-capacitacion {
+      background: #f5f3ff;
+      color: var(--cap-text);
+      border-color: #ddd6fe;
+    }
+    .mode-pill.pill-capacitacion .pill-dot { background: var(--cap-dot); }
+    .mode-pill.pill-capacitacion.active {
+      background: #ede9fe;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+    }
+
+    /* Pill Limpiar */
+    .mode-pill.pill-limpiar {
+      background: #f8fafc;
+      color: #475569;
+      border-color: #e2e8f0;
+    }
+    .mode-pill.pill-limpiar .pill-dot { background: #94a3b8; }
+    .mode-pill.pill-limpiar.active {
+      background: #e2e8f0;
+      border-color: #64748b;
+      box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.2);
+    }
+
+    .instructions-hint {
+      font-size: 11.5px;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* CINTA DE MÉTRICAS & INDICADORES (KPI RIBBON) */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .kpi-data {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kpi-title {
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .kpi-icon-pill {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .kpi-card.habiles .kpi-value { color: var(--hab-text); }
+    .kpi-card.habiles .kpi-icon-pill { background: var(--hab-bg); color: var(--hab-dot); }
+
+    .kpi-card.bloqueados .kpi-value { color: var(--bloq-text); }
+    .kpi-card.bloqueados .kpi-icon-pill { background: var(--bloq-bg); color: var(--bloq-dot); }
+
+    .kpi-card.capacitaciones .kpi-value { color: var(--cap-text); }
+    .kpi-card.capacitaciones .kpi-icon-pill { background: var(--cap-bg); color: var(--cap-dot); }
+
+    .kpi-card.festivos .kpi-value { color: var(--fest-text); }
+    .kpi-card.festivos .kpi-icon-pill { background: var(--fest-bg); color: var(--fest-dot); }
+
+    /* LAYOUT PRINCIPAL: CALENDARIO + DETALLE LATERAL */
+    .calendar-layout {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .calendar-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* TARJETA DEL CALENDARIO */
+    .calendar-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ENCABEZADOS DÍAS DE LA SEMANA */
+    .weekdays-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .weekday-title {
+      font-family: var(--font-heading);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .weekday-title.weekend {
+      color: #94a3b8;
+    }
+
+    /* GRILLA DE DÍAS DEL MES */
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    /* CELDA INDIVIDUAL DE DÍA */
+    .day-cell {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      min-height: 80px;
+      padding: 8px 7px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.12s ease;
+      user-select: none;
+    }
+
+    .day-cell:hover:not(.empty) {
+      border-color: #94a3b8;
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+
+    .day-cell.empty {
+      background: transparent;
+      border: 1px dashed transparent;
+      cursor: default;
+    }
+
+    .day-cell.today {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px #3b82f6;
+    }
+
+    .day-cell.weekend {
+      background: var(--weekend-bg);
+      border-color: #f1f5f9;
+    }
+
+    .day-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .day-number {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .day-cell.weekend .day-number {
+      color: var(--weekend-text);
+    }
+
+    .today-pill {
+      font-size: 9.5px;
+      font-weight: 700;
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 1px 5px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* BADGES Y CHIPS DENTRO DE LA CELDA */
+    .day-badges-container {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 6px;
+      border-radius: 6px;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-badge .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ESTILOS DE CELDA SEGÚN ESTADO */
+    .day-cell.status-habilitado {
+      background: var(--hab-bg);
+      border-color: var(--hab-border);
+    }
+    .day-cell.status-habilitado .status-badge {
+      background: var(--hab-badge);
+      color: var(--hab-text);
+    }
+    .day-cell.status-habilitado .badge-dot { background: var(--hab-dot); }
+
+    .day-cell.status-bloqueado {
+      background: var(--bloq-bg);
+      border-color: var(--bloq-border);
+    }
+    .day-cell.status-bloqueado .status-badge {
+      background: var(--bloq-badge);
+      color: var(--bloq-text);
+    }
+    .day-cell.status-bloqueado .badge-dot { background: var(--bloq-dot); }
+
+    .day-cell.status-capacitacion {
+      background: var(--cap-bg);
+      border-color: var(--cap-border);
+    }
+    .day-cell.status-capacitacion .status-badge {
+      background: var(--cap-badge);
+      color: var(--cap-text);
+    }
+    .day-cell.status-capacitacion .badge-dot { background: var(--cap-dot); }
+
+    /* ESTILO FESTIVO */
+    .day-cell.is-holiday {
+      background: var(--fest-bg);
+      border-color: var(--fest-border);
+    }
+    .holiday-badge {
+      background: var(--fest-badge);
+      color: var(--fest-text);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 5px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* LEYENDA INFERIOR */
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-light);
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    /* PANEL LATERAL: AGENDA Y RESUMEN DEL MES */
+    .sidebar-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 10px;
+    }
+
+    .sidebar-header h2 {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .sidebar-section-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .badge-count {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .events-scroll-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .event-item-card {
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-page);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .event-item-card.cap {
+      background: var(--cap-bg);
+      border-color: var(--cap-border);
+      color: var(--cap-text);
+    }
+
+    .event-item-card.fest {
+      background: var(--fest-bg);
+      border-color: var(--fest-border);
+      color: var(--fest-text);
+    }
+
+    .event-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .event-info strong {
+      font-weight: 600;
+    }
+
+    .event-info span {
+      font-size: 10.5px;
+      opacity: 0.85;
+    }
+
+    .btn-delete-event {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      line-height: 1;
+    }
+
+    .btn-delete-event:hover {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .empty-state {
+      padding: 12px;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 11.5px;
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-sm);
+    }
+
+    /* MODAL DE DETALLE / ASIGNACIÓN DE CAPACITACIÓN */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transform: scale(0.96);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: -8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .form-input {
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    /* TOAST NOTIFICACIÓN */
+    .toast-pill {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(50px);
+      background: #0f172a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast-pill.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ESTILOS PARA IMPRESIÓN LIMPIA */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .header-actions, .toolbar-modes, .btn-delete-event {
+        display: none !important;
+      }
+      .calendar-layout {
+        grid-template-columns: 1fr;
+      }
+      .day-cell {
+        min-height: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- 1. CABECERA PRINCIPAL -->
+    <header class="header-panel">
+      <div class="brand-section">
+        <div class="brand-logo">📅</div>
+        <div class="brand-info">
+          <h1>
+            Calendario Operativo
+            <span class="flag-pill">🇨🇴 Colombia</span>
+          </h1>
+          <p>Disponibilidad, Bloqueos y Capacitaciones</p>
+        </div>
+      </div>
+
+      <!-- NAVEGADOR DE MES Y AÑO -->
+      <div class="nav-date-group">
+        <button class="btn-nav-arrow" id="btnPrevMonth" title="Mes Anterior" onclick="cambiarMes(-1)">‹</button>
+        <select class="select-clean" id="selectMes" onchange="seleccionarMesAno()">
+          <!-- Generado vía JS -->
+        </select>
+        <select class="select-clean" id="selectAnio" onchange="seleccionarMesAno()">
+          <!-- Generado vía JS -->
+        </select>
+        <button class="btn-nav-arrow" id="btnNextMonth" title="Mes Siguiente" onclick="cambiarMes(1)">›</button>
+      </div>
+
+      <!-- ACCIONES: COMPARTIR Y EXPORTAR -->
+      <div class="header-actions">
+        <button class="btn-action btn-share" onclick="compartirEnlaceWeb()" title="Genera un enlace con tu programación para que otros la vean en GitHub">
+          🔗 Compartir Calendario
+        </button>
+        <button class="btn-action btn-secondary" onclick="exportarExcel()" title="Descargar reporte en Excel">
+          📊 Excel
+        </button>
+        <button class="btn-action btn-secondary" onclick="limpiarMesActual()" title="Limpiar todas las marcas del mes visible">
+          🧹 Limpiar Mes
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. BARRA DE HERRAMIENTAS: SELECTOR DE MODO DE CLIC -->
+    <section class="toolbar-modes">
+      <div class="mode-label-group">
+        <span>✏️ Modo al hacer clic:</span>
+        <div class="mode-pills-container">
+          <div class="mode-pill pill-habilitado active" id="btnModoHabilitado" onclick="fijarModo('habilitado')">
+            <span class="pill-dot"></span>
+            <strong>Habilitado</strong>
+          </div>
+          <div class="mode-pill pill-bloqueado" id="btnModoBloqueado" onclick="fijarModo('bloqueado')">
+            <span class="pill-dot"></span>
+            <strong>Bloqueado</strong>
+          </div>
+          <div class="mode-pill pill-capacitacion" id="btnModoCapacitacion" onclick="fijarModo('capacitacion')">
+            <span class="pill-dot"></span>
+            <strong>Capacitación</strong>
+          </div>
+          <div class="mode-pill pill-limpiar" id="btnModoLimpiar" onclick="fijarModo('limpiar')">
+            <span class="pill-dot"></span>
+            <strong>Borrar / Normal</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="instructions-hint">
+        💡 Toca cualquier día hábil para asignar el estado activo
+      </div>
+    </section>
+
+    <!-- 3. CINTA DE MÉTRICAS & INDICADORES (KPIS) -->
+    <section class="kpi-grid">
+      <div class="kpi-card habiles">
+        <div class="kpi-data">
+          <span class="kpi-title">Días Habilitados</span>
+          <span class="kpi-value" id="kpiHabilitados">0</span>
+          <span class="kpi-sub" id="kpiHabilitadosSub">0% del mes hábil</span>
+        </div>
+        <div class="kpi-icon-pill">🟢</div>
+      </div>
+
+      <div class="kpi-card bloqueados">
+        <div class="kpi-data">
+          <span class="kpi-title">Días Bloqueados</span>
+          <span class="kpi-value" id="kpiBloqueados">0</span>
+          <span class="kpi-sub" id="kpiBloqueadosSub">Cierres o descansos</span>
+        </div>
+        <div class="kpi-icon-pill">🔴</div>
+      </div>
+
+      <div class="kpi-card capacitaciones">
+        <div class="kpi-data">
+          <span class="kpi-title">Capacitaciones</span>
+          <span class="kpi-value" id="kpiCapacitaciones">0</span>
+          <span class="kpi-sub">Jornadas formativas</span>
+        </div>
+        <div class="kpi-icon-pill">🟣</div>
+      </div>
+
+      <div class="kpi-card festivos">
+        <div class="kpi-data">
+          <span class="kpi-title">Festivos Colombia</span>
+          <span class="kpi-value" id="kpiFestivos">0</span>
+          <span class="kpi-sub">Ley 51 de 1983</span>
+        </div>
+        <div class="kpi-icon-pill">🇨🇴</div>
+      </div>
+    </section>
+
+    <!-- 4. LAYOUT PRINCIPAL: CALENDARIO + DETALLES -->
+    <main class="calendar-layout">
+
+      <!-- COLUMNA IZQUIERDA: CALENDARIO -->
+      <section class="calendar-card">
+        <!-- Encabezados Lun - Dom -->
+        <div class="weekdays-header">
+          <div class="weekday-title">Lun</div>
+          <div class="weekday-title">Mar</div>
+          <div class="weekday-title">Mié</div>
+          <div class="weekday-title">Jue</div>
+          <div class="weekday-title">Vie</div>
+          <div class="weekday-title weekend">Sáb</div>
+          <div class="weekday-title weekend">Dom</div>
+        </div>
+
+        <!-- Grilla de Días -->
+        <div class="days-grid" id="diasGrid">
+          <!-- Celdas construidas dinámicamente -->
+        </div>
+
+        <!-- Leyenda explicativa -->
+        <footer class="legend-row">
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--hab-dot);"></span>
+            <span>Habilitado (Disponible)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--bloq-dot);"></span>
+            <span>Bloqueado (No disponible)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--cap-dot);"></span>
+            <span>Capacitación / Formación</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--fest-dot);"></span>
+            <span>Festivo Oficial Colombia</span>
+          </div>
+        </footer>
+      </section>
+
+      <!-- COLUMNA DERECHA: AGENDA & RESUMEN DEL MES -->
+      <aside class="sidebar-card">
+        <div class="sidebar-header">
+          <h2>📋 Agenda del Mes</h2>
+          <span class="badge-count" id="badgeTotalEventos">0 eventos</span>
+        </div>
+
+        <!-- Capacitaciones programadas -->
+        <div>
+          <div class="sidebar-section-title">
+            <span>🟣 Capacitaciones</span>
+            <span class="badge-count" id="countCapacitacionesSide">0</span>
+          </div>
+          <div class="events-scroll-list" id="listaCapacitacionesSide">
+            <!-- Renderizado dinámico -->
+          </div>
+        </div>
+
+        <!-- Festivos oficiales de Colombia -->
+        <div>
+          <div class="sidebar-section-title">
+            <span>🇨🇴 Festivos Oficiales</span>
+            <span class="badge-count" id="countFestivosSide">0</span>
+          </div>
+          <div class="events-scroll-list" id="listaFestivosSide">
+            <!-- Renderizado dinámico -->
+          </div>
+        </div>
+
+        <!-- Información de Ayuda GitHub -->
+        <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-light); font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+          <strong>🚀 Compatible con GitHub Pages:</strong><br/>
+          Los cambios se guardan localmente y el botón <em>Compartir Calendario</em> genera un link único que replica exactamente tu programación a otros usuarios.
+        </div>
+      </aside>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL PARA NOMBRAR / DETALLAR CAPACITACIÓN -->
+  <div class="modal-overlay" id="modalCapacitacion">
+    <div class="modal-box">
+      <h3 class="modal-title">🟣 Detalle de Capacitación</h3>
+      <p class="modal-subtitle" id="modalFechaTexto">Fecha seleccionada</p>
+
+      <div class="form-group">
+        <label for="inputTemaCapacitacion">Tema o Nombre del Taller / Curso:</label>
+        <input type="text" id="inputTemaCapacitacion" class="form-input" placeholder="Ej: Inducción Operativa, SST, Liderazgo..." />
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-action btn-secondary" onclick="cerrarModalCapacitacion()">Cancelar</button>
+        <button class="btn-action btn-share" onclick="guardarTemaCapacitacion()">Guardar Capacitación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICACIÓN FLOTANTE -->
+  <div class="toast-pill" id="toastNotificacion">
+    <span id="toastIcono">✅</span>
+    <span id="toastMensaje">Enlace copiado al portapapeles</span>
+  </div>
+
+  <!-- LÓGICA JAVASCRIPT INTEGRAL -->
+  <script>
+    /**
+     * =========================================================================
+     * CALENDARIO OPERATIVO COLOMBIA (LISTO PARA GITHUB PAGES)
+     * Motor de Festivos Oficiales (Ley Emiliani) + Sincronización por Enlace Web
+     * =========================================================================
+     */
+
+    const MESES = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+    // Estado de la Aplicación
+    const fechaActual = new Date();
+    let anioActivo = fechaActual.getFullYear();
+    let mesActivo = fechaActual.getMonth(); // 0 a 11
+    let modoActivo = "habilitado"; // "habilitado" | "bloqueado" | "capacitacion" | "limpiar"
+    let fechaPendienteCapacitacion = null;
+
+    // Almacén de Estados por Fecha (clave: "AAAA-MM-DD", valor: { estado: string, detalle?: string })
+    // Estados: "habilitado" | "bloqueado" | "capacitacion"
+    let agendaDias = {};
+
+    const STORAGE_KEY = "colombia_calendario_operativo_v1";
+
+    /**
+     * =========================================================================
+     * UTILIDADES DE FECHAS & COMPUTO DE PASCUA (FESTIVOS LEY EMILIANI)
+     * =========================================================================
+     */
+    function pad2(n) {
+      return String(n).padStart(2, "0");
+    }
+
+    function claveFecha(y, m, d) {
+      return `${y}-${pad2(m + 1)}-${pad2(d)}`;
+    }
+
+    function fechaDesdePartes(y, m, d) {
+      return new Date(y, m - 1, d, 12, 0, 0);
+    }
+
+    function sumarDias(fecha, dias) {
+      const f = new Date(fecha);
+      f.setDate(f.getDate() + dias);
+      return f;
+    }
+
+    function siguienteLunes(fecha) {
+      const dia = fecha.getDay(); // 0 = Dom, 1 = Lun...
+      const diff = dia === 1 ? 0 : (8 - dia) % 7;
+      return sumarDias(fecha, diff);
+    }
+
+    /**
+     * Algoritmo Butcher para Pascua
+     */
+    function calcularPascua(y) {
+      const a = y % 19;
+      const b = Math.floor(y / 100);
+      const c = y % 100;
+      const d = Math.floor(b / 4);
+      const e = b % 4;
+      const f = Math.floor((b + 8) / 25);
+      const g = Math.floor((b - f + 1) / 3);
+      const h = (19 * a + b - d - g + 15) % 30;
+      const i = Math.floor(c / 4);
+      const k = c % 4;
+      const l = (32 + 2 * e + 2 * i - h - k) % 7;
+      const m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const mesPascua = Math.floor((h + l - 7 * m + 114) / 31);
+      const diaPascua = ((h + l - 7 * m + 114) % 31) + 1;
+      return fechaDesdePartes(y, mesPascua, diaPascua);
+    }
+
+    /**
+     * Festivos Oficiales de Colombia (Ley 51 de 1983)
+     */
+    function obtenerFestivosColombia(y) {
+      const pascua = calcularPascua(y);
+      const lista = [
+        { fecha: fechaDesdePartes(y, 1, 1), nombre: "Año Nuevo" },
+        { fecha: siguienteLunes(fechaDesdePartes(y, 1, 6)), nombre: "Reyes Magos" },
+        { fecha: siguienteLunes(fechaDesdePartes(y, 3, 19)), nombre: "San José" },
+        { fecha: sumarDias(pascua, -3), nombre: "Jueves Santo" },
+        { fecha: sumarDias(pascua, -2), nombre: "Viernes Santo" },
+        { fecha: fechaDesdePartes(y, 5, 1), nombre: "Día del Trabajo" },
+        { fecha: siguienteLunes(sumarDias(pascua, 39)), nombre: "Ascensión del Señor" },
+        { fecha: siguienteLunes(sumarDias(pascua, 60)), nombre: "Corpus Christi" },
+        { fecha: siguienteLunes(sumarDias(pascua, 68)), nombre: "Sagrado Corazón" },
+        { fecha: siguienteLunes(fechaDesdePartes(y, 6, 29)), nombre: "San Pedro y San Pablo" },
+        { fecha: fechaDesdePartes(y, 7, 20), nombre: "Día de la Independencia" },
+        { fecha: fechaDesdePartes(y, 8, 7), nombre: "Batalla de Boyacá" },
+        { fecha: siguienteLunes(fechaDesdePartes(y, 8, 15)), nombre: "Asunción de la Virgen" },
+        { fecha: siguienteLunes(fechaDesdePartes(y, 10, 12)), nombre: "Día de la Raza" },
+        { fecha: siguienteLunes(fechaDesdePartes(y, 11, 1)), nombre: "Todos los Santos" },
+        { fecha: siguienteLunes(fechaDesdePartes(y, 11, 11)), nombre: "Independencia de Cartagena" },
+        { fecha: fechaDesdePartes(y, 12, 8), nombre: "Inmaculada Concepción" },
+        { fecha: fechaDesdePartes(y, 12, 25), nombre: "Navidad" }
+      ];
+
+      const mapa = {};
+      lista.forEach(item => {
+        const k = `${item.fecha.getFullYear()}-${pad2(item.fecha.getMonth() + 1)}-${pad2(item.fecha.getDate())}`;
+        mapa[k] = item.nombre;
+      });
+      return mapa;
+    }
+
+    /**
+     * =========================================================================
+     * PERSISTENCIA & SINCRONIZACIÓN DE ENLACE WEB (URL HASH)
+     * =========================================================================
+     */
+    function guardarEnLocalStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(agendaDias));
+      } catch (err) {
+        console.warn("Error guardando en localStorage:", err);
+      }
+    }
+
+    function cargarDesdeLocalStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) agendaDias = JSON.parse(raw);
+      } catch (err) {
+        console.warn("Error leyendo localStorage:", err);
+      }
+    }
+
+    /**
+     * Lee la programación si alguien abrió la app con un enlace compartido (#data=...)
+     */
+    function cargarDesdeURL() {
+      const hash = window.location.hash;
+      if (!hash || !hash.includes("data=")) return false;
+
+      try {
+        const base64Data = hash.split("data=")[1];
+        const jsonStr = decodeURIComponent(escape(atob(base64Data)));
+        const datosCargados = JSON.parse(jsonStr);
+
+        if (datosCargados && typeof datosCargados === "object") {
+          agendaDias = datosCargados;
+          guardarEnLocalStorage();
+          mostrarToast("✨ ¡Calendario compartido cargado exitosamente!", "🔗");
+          return true;
+        }
+      } catch (err) {
+        console.error("No se pudo decodificar la URL compartida:", err);
+      }
+      return false;
+    }
+
+    function compartirEnlaceWeb() {
+      try {
+        const jsonStr = JSON.stringify(agendaDias);
+        const base64Data = btoa(unescape(encodeURIComponent(jsonStr)));
+        const urlCompartible = `${window.location.origin}${window.location.pathname}#data=${base64Data}`;
+
+        // Copiar al portapapeles
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(urlCompartible).then(() => {
+            mostrarToast("¡Enlace copiado! Compártelo con tu equipo", "📋");
+          });
+        } else {
+          // Fallback clásico
+          const inputTemp = document.createElement("input");
+          inputTemp.value = urlCompartible;
+          document.body.appendChild(inputTemp);
+          inputTemp.select();
+          document.execCommand("copy");
+          inputTemp.remove();
+          mostrarToast("¡Enlace copiado al portapapeles!", "📋");
+        }
+
+        // Actualizar el hash en la barra de direcciones
+        window.location.hash = `data=${base64Data}`;
+      } catch (err) {
+        alert("Error al generar enlace compartible: " + err.message);
+      }
+    }
+
+    function mostrarToast(mensaje, icono = "✅") {
+      const toast = document.getElementById("toastNotificacion");
+      document.getElementById("toastMensaje").textContent = mensaje;
+      document.getElementById("toastIcono").textContent = icono;
+      toast.classList.add("visible");
+      setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 3500);
+    }
+
+    /**
+     * =========================================================================
+     * RENDERIZADO DEL CALENDARIO Y CÁLCULOS
+     * =========================================================================
+     */
+    function renderizar() {
+      renderizarSelectores();
+      renderizarGrilla();
+      actualizarEstadisticasYAgenda();
+      guardarEnLocalStorage();
+    }
+
+    function renderizarSelectores() {
+      const selectMes = document.getElementById("selectMes");
+      const selectAnio = document.getElementById("selectAnio");
+
+      selectMes.innerHTML = "";
+      MESES.forEach((m, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = m;
+        if (idx === mesActivo) opt.selected = true;
+        selectMes.appendChild(opt);
+      });
+
+      selectAnio.innerHTML = "";
+      for (let y = 2024; y <= 2030; y++) {
+        const opt = document.createElement("option");
+        opt.value = y;
+        opt.textContent = y;
+        if (y === anioActivo) opt.selected = true;
+        selectAnio.appendChild(opt);
+      }
+    }
+
+    function seleccionarMesAno() {
+      mesActivo = Number(document.getElementById("selectMes").value);
+      anioActivo = Number(document.getElementById("selectAnio").value);
+      renderizar();
+    }
+
+    function cambiarMes(delta) {
+      mesActivo += delta;
+      if (mesActivo < 0) {
+        mesActivo = 11;
+        anioActivo -= 1;
+      } else if (mesActivo > 11) {
+        mesActivo = 0;
+        anioActivo += 1;
+      }
+      renderizar();
+    }
+
+    function fijarModo(modo) {
+      modoActivo = modo;
+      document.querySelectorAll(".mode-pill").forEach(p => p.classList.remove("active"));
+      if (modo === "habilitado") document.getElementById("btnModoHabilitado").classList.add("active");
+      if (modo === "bloqueado") document.getElementById("btnModoBloqueado").classList.add("active");
+      if (modo === "capacitacion") document.getElementById("btnModoCapacitacion").classList.add("active");
+      if (modo === "limpiar") document.getElementById("btnModoLimpiar").classList.add("active");
+    }
+
+    function renderizarGrilla() {
+      const contenedor = document.getElementById("diasGrid");
+      contenedor.innerHTML = "";
+
+      const festivosMapa = obtenerFestivosColombia(anioActivo);
+      const totalDiasMes = new Date(anioActivo, mesActivo + 1, 0).getDate();
+
+      // Cálculo del offset del primer día (Lunes = 0, Dom = 6)
+      const primerDiaObj = new Date(anioActivo, mesActivo, 1);
+      const offsetInicio = (primerDiaObj.getDay() + 6) % 7;
+
+      // Celdas vacías al inicio
+      for (let i = 0; i < offsetInicio; i++) {
+        const vacia = document.createElement("div");
+        vacia.className = "day-cell empty";
+        contenedor.appendChild(vacia);
+      }
+
+      const hoyStr = claveFecha(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate());
+
+      for (let dia = 1; dia <= totalDiasMes; dia++) {
+        const k = claveFecha(anioActivo, mesActivo, dia);
+        const fechaDia = new Date(anioActivo, mesActivo, dia);
+        const diaSemanaNum = fechaDia.getDay();
+        const esFinSemana = (diaSemanaNum === 0 || diaSemanaNum === 6);
+        const nombreFestivo = festivosMapa[k] || null;
+
+        const infoAsignada = agendaDias[k] || null;
+        const estadoAsignado = infoAsignada ? infoAsignada.estado : null;
+
+        const celda = document.createElement("div");
+        celda.className = "day-cell";
+
+        if (k === hoyStr) celda.classList.add("today");
+        if (esFinSemana) celda.classList.add("weekend");
+        if (nombreFestivo) celda.classList.add("is-holiday");
+
+        if (estadoAsignado) {
+          celda.classList.add(`status-${estadoAsignado}`);
+        }
+
+        // Fila superior (número de día y tag Hoy)
+        let topRowHTML = `
+          <div class="day-top-row">
+            <span class="day-number">${dia}</span>
+            ${k === hoyStr ? '<span class="today-pill">Hoy</span>' : ''}
+          </div>
+        `;
+
+        // Contenedor de Badges
+        let badgesHTML = '<div class="day-badges-container">';
+
+        if (nombreFestivo) {
+          badgesHTML += `<div class="holiday-badge" title="Festivo: ${nombreFestivo}">🇨🇴 ${nombreFestivo}</div>`;
+        }
+
+        if (estadoAsignado === "habilitado") {
+          badgesHTML += `<div class="status-badge"><span class="badge-dot"></span>Habilitado</div>`;
+        } else if (estadoAsignado === "bloqueado") {
+          badgesHTML += `<div class="status-badge"><span class="badge-dot"></span>Bloqueado</div>`;
+        } else if (estadoAsignado === "capacitacion") {
+          const tema = (infoAsignada && infoAsignada.detalle) ? infoAsignada.detalle : "Capacitación";
+          badgesHTML += `<div class="status-badge" title="${tema}"><span class="badge-dot"></span>${tema}</div>`;
+        }
+
+        badgesHTML += '</div>';
+
+        celda.innerHTML = topRowHTML + badgesHTML;
+
+        // Interacción de clic
+        celda.onclick = () => {
+          manejarClicDia(k, dia, nombreFestivo, esFinSemana);
+        };
+
+        contenedor.appendChild(celda);
+      }
+    }
+
+    function manejarClicDia(key, dia, nombreFestivo, esFinSemana) {
+      if (modoActivo === "limpiar") {
+        delete agendaDias[key];
+        renderizar();
+        return;
+      }
+
+      if (modoActivo === "capacitacion") {
+        abrirModalCapacitacion(key, dia);
+        return;
+      }
+
+      // Si se hace clic con modo habilitado o bloqueado
+      agendaDias[key] = {
+        estado: modoActivo
+      };
+
+      renderizar();
+    }
+
+    function abrirModalCapacitacion(key, dia) {
+      fechaPendienteCapacitacion = key;
+      const temaActual = (agendaDias[key] && agendaDias[key].detalle) ? agendaDias[key].detalle : "";
+      document.getElementById("inputTemaCapacitacion").value = temaActual;
+      document.getElementById("modalFechaTexto").textContent = `${dia} de ${MESES[mesActivo]} de ${anioActivo}`;
+      document.getElementById("modalCapacitacion").classList.add("open");
+      setTimeout(() => document.getElementById("inputTemaCapacitacion").focus(), 100);
+    }
+
+    function cerrarModalCapacitacion() {
+      fechaPendienteCapacitacion = null;
+      document.getElementById("modalCapacitacion").classList.remove("open");
+    }
+
+    function guardarTemaCapacitacion() {
+      if (!fechaPendienteCapacitacion) return;
+      const tema = document.getElementById("inputTemaCapacitacion").value.trim() || "Capacitación";
+
+      agendaDias[fechaPendienteCapacitacion] = {
+        estado: "capacitacion",
+        detalle: tema
+      };
+
+      cerrarModalCapacitacion();
+      renderizar();
+    }
+
+    function limpiarMesActual() {
+      const prefijo = `${anioActivo}-${pad2(mesActivo + 1)}`;
+      let count = 0;
+      Object.keys(agendaDias).forEach(k => {
+        if (k.startsWith(prefijo)) {
+          delete agendaDias[k];
+          count++;
+        }
+      });
+
+      renderizar();
+      mostrarToast(count > 0 ? `Se limpiaron ${count} días del mes.` : "El mes ya estaba despejado.", "🧹");
+    }
+
+    /**
+     * =========================================================================
+     * ESTADÍSTICAS Y PANEL RESUMEN
+     * =========================================================================
+     */
+    function actualizarEstadisticasYAgenda() {
+      const festivosMapa = obtenerFestivosColombia(anioActivo);
+      const totalDiasMes = new Date(anioActivo, mesActivo + 1, 0).getDate();
+      const prefijoMes = `${anioActivo}-${pad2(mesActivo + 1)}`;
+
+      let countHabilesMes = 0;
+      let countHabilitados = 0;
+      let countBloqueados = 0;
+      let countCapacitaciones = 0;
+      let countFestivos = 0;
+
+      const listaCapacitaciones = [];
+      const listaFestivos = [];
+
+      for (let dia = 1; dia <= totalDiasMes; dia++) {
+        const k = claveFecha(anioActivo, mesActivo, dia);
+        const fechaDia = new Date(anioActivo, mesActivo, dia);
+        const diaSemana = fechaDia.getDay();
+        const esFinSemana = (diaSemana === 0 || diaSemana === 6);
+        const festivo = festivosMapa[k] || null;
+
+        if (!esFinSemana && !festivo) countHabilesMes++;
+        if (festivo) {
+          countFestivos++;
+          listaFestivos.push({ key: k, dia, nombre: festivo, diaSemanaNombre: DIAS_SEMANA[diaSemana] });
+        }
+
+        const info = agendaDias[k];
+        if (info) {
+          if (info.estado === "habilitado") countHabilitados++;
+          if (info.estado === "bloqueado") countBloqueados++;
+          if (info.estado === "capacitacion") {
+            countCapacitaciones++;
+            listaCapacitaciones.push({
+              key: k,
+              dia,
+              tema: info.detalle || "Capacitación",
+              diaSemanaNombre: DIAS_SEMANA[diaSemana]
+            });
+          }
+        }
+      }
+
+      // KPIs Ribbon
+      document.getElementById("kpiHabilitados").textContent = countHabilitados;
+      document.getElementById("kpiBloqueados").textContent = countBloqueados;
+      document.getElementById("kpiCapacitaciones").textContent = countCapacitaciones;
+      document.getElementById("kpiFestivos").textContent = countFestivos;
+
+      const pctHab = countHabilesMes > 0 ? Math.round((countHabilitados / countHabilesMes) * 100) : 0;
+      document.getElementById("kpiHabilitadosSub").textContent = `${pctHab}% de los días hábiles`;
+
+      // Sidebar: Contadores
+      document.getElementById("badgeTotalEventos").textContent = `${listaCapacitaciones.length + listaFestivos.length} eventos`;
+      document.getElementById("countCapacitacionesSide").textContent = listaCapacitaciones.length;
+      document.getElementById("countFestivosSide").textContent = listaFestivos.length;
+
+      // Sidebar: Lista Capacitaciones
+      const contenedorCapSide = document.getElementById("listaCapacitacionesSide");
+      contenedorCapSide.innerHTML = "";
+      if (listaCapacitaciones.length === 0) {
+        contenedorCapSide.innerHTML = `<div class="empty-state">Sin capacitaciones programadas en este mes.</div>`;
+      } else {
+        listaCapacitaciones.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "event-item-card cap";
+          div.innerHTML = `
+            <div class="event-info">
+              <strong>${item.tema}</strong>
+              <span>${item.diaSemanaNombre}, ${item.dia} de ${MESES[mesActivo]}</span>
+            </div>
+            <button class="btn-delete-event" onclick="eliminarEvento('${item.key}')" title="Quitar capacitación">✕</button>
+          `;
+          contenedorCapSide.appendChild(div);
+        });
+      }
+
+      // Sidebar: Lista Festivos
+      const contenedorFestSide = document.getElementById("listaFestivosSide");
+      contenedorFestSide.innerHTML = "";
+      if (listaFestivos.length === 0) {
+        contenedorFestSide.innerHTML = `<div class="empty-state">No hay festivos en este mes.</div>`;
+      } else {
+        listaFestivos.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "event-item-card fest";
+          div.innerHTML = `
+            <div class="event-info">
+              <strong>🇨🇴 ${item.nombre}</strong>
+              <span>${item.diaSemanaNombre}, ${item.dia} de ${MESES[mesActivo]}</span>
+            </div>
+          `;
+          contenedorFestSide.appendChild(div);
+        });
+      }
+    }
+
+    function eliminarEvento(key) {
+      delete agendaDias[key];
+      renderizar();
+    }
+
+    /**
+     * =========================================================================
+     * EXPORTACIÓN A EXCEL (SHEETJS)
+     * =========================================================================
+     */
+    function exportarExcel() {
+      if (typeof XLSX === "undefined") {
+        alert("La librería de Excel aún no ha terminado de cargar. Por favor intenta de nuevo en un instante.");
+        return;
+      }
+
+      const festivosMapa = obtenerFestivosColombia(anioActivo);
+      const totalDiasMes = new Date(anioActivo, mesActivo + 1, 0).getDate();
+
+      const filas = [
+        [`PROGRAMACIÓN OPERATIVA & DISPONIBILIDAD - ${MESES[mesActivo].toUpperCase()} ${anioActivo}`],
+        ["República de Colombia • Festivos Oficiales Ley 51 de 1983"],
+        [],
+        ["Fecha (AAAA-MM-DD)", "Día Semana", "Estado Operativo", "Festivo Colombia", "Detalle / Tema de Capacitación"]
+      ];
+
+      for (let dia = 1; dia <= totalDiasMes; dia++) {
+        const k = claveFecha(anioActivo, mesActivo, dia);
+        const fechaDia = new Date(anioActivo, mesActivo, dia);
+        const diaSemana = DIAS_SEMANA[fechaDia.getDay()];
+        const esFinSemana = (fechaDia.getDay() === 0 || fechaDia.getDay() === 6);
+        const festivo = festivosMapa[k] || "";
+
+        const info = agendaDias[k];
+        let estadoStr = "Ordinario";
+        let detalleStr = "";
+
+        if (esFinSemana) estadoStr = "Fin de Semana";
+        if (festivo) estadoStr = "Festivo Nacional";
+
+        if (info) {
+          if (info.estado === "habilitado") estadoStr = "Habilitado (Disponible)";
+          if (info.estado === "bloqueado") estadoStr = "Bloqueado (No disponible)";
+          if (info.estado === "capacitacion") {
+            estadoStr = "Capacitación";
+            detalleStr = info.detalle || "Capacitación programada";
+          }
+        }
+
+        filas.push([k, diaSemana, estadoStr, festivo, detalleStr]);
+      }
+
+      const libro = XLSX.utils.book_new();
+      const hoja = XLSX.utils.aoa_to_sheet(filas);
+      hoja["!cols"] = [{ wch: 18 }, { wch: 16 }, { wch: 26 }, { wch: 30 }, { wch: 36 }];
+      XLSX.utils.book_append_sheet(libro, hoja, `${MESES[mesActivo]}_${anioActivo}`);
+      XLSX.writeFile(libro, `calendario_operativo_${MESES[mesActivo].toLowerCase()}_${anioActivo}.xlsx`);
+    }
+
+    // Arranque inicial
+    cargarDesdeLocalStorage();
+    cargarDesdeURL();
+    renderizar();
+  </script>
+</body>
+</html>
