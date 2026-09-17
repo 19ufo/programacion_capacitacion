@@ -565,7 +565,7 @@
     /* ENCABEZADOS DÍAS SEMANA */
     .weekdays-header {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 4px;
       text-align: center;
       padding-bottom: 2px;
@@ -584,19 +584,21 @@
       color: #94a3b8;
     }
 
-    /* GRILLA DE DÍAS */
+    /* GRILLA DE DÍAS - COLUMNAS ESTRICTAMENTE IGUALES */
     .days-grid {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 4px;
     }
 
-    /* CELDA INDIVIDUAL DE DÍA */
+    /* CELDA INDIVIDUAL DE DÍA (TAMAÑO UNIFORME Y PERFECTAMENTE ALINEADO) */
     .day-cell {
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      min-height: 64px;
+      height: 66px;
+      min-width: 0;
+      overflow: hidden;
       padding: 5px 6px;
       display: flex;
       flex-direction: column;
@@ -607,9 +609,11 @@
       user-select: none;
     }
 
-    /* En la vista mensual individual las celdas son un poco más amplias */
+    /* En la vista mensual individual las celdas son un poco más amplias pero uniformes */
     .single-month-card .day-cell {
-      min-height: 76px;
+      height: 80px;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .day-cell:hover:not(.empty) {
@@ -667,6 +671,9 @@
       display: flex;
       flex-direction: column;
       gap: 2px;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .status-badge {
@@ -678,6 +685,8 @@
       padding: 2px 5px;
       border-radius: 4px;
       line-height: 1.2;
+      min-width: 0;
+      max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -736,6 +745,8 @@
       display: flex;
       align-items: center;
       gap: 3px;
+      min-width: 0;
+      max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
