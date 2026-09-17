@@ -11,13 +11,15 @@ Aplicación web moderna, ligera y elegante para la gestión y visualización de 
 
 ## ✨ Características Principales
 
+- 🗓️ **Vista Panorama Cuatrimestral (Sep — Dic)**: Visualiza simultáneamente los 4 meses clave (**Septiembre**, **Octubre**, **Noviembre** y **Diciembre 2026**) en una grilla armónica e interactiva.
+- 📅 **Vista Mes Individual**: Para enfocar el detalle de cualquier mes con selectores rápidos.
 - 🟢 **Días Habilitados**: Marca jornadas disponibles, operativas o con agenda abierta.
 - 🔴 **Días Bloqueados**: Señala cierres, indisponibilidad, descansos o mantenimiento.
 - 🟣 **Días de Capacitación**: Programa entrenamientos, cursos, inducciones y talleres (con asignación de tema específico).
-- 🇨🇴 **Festivos Oficiales de Colombia**: Motor dinámico con los 18 festivos de ley (Ley Emiliani - Ley 51 de 1983) calculados automáticamente para cualquier año.
-- 🔗 **Función "Compartir Calendario" (URL Hash)**: Permite copiar un enlace único que incluye toda tu programación codificada (`#data=...`). ¡Cualquier persona que abra ese link en su navegador verá exactamente tu calendario!
+- 🇨🇴 **Festivos Oficiales de Colombia**: Motor dinámico con los 18 festivos de ley (Ley Emiliani - Ley 51 de 1983) calculados automáticamente para cada mes.
+- 🔗 **Función "Compartir Calendario" (URL Hash)**: Permite copiar un enlace único que incluye toda tu programación codificada (`#data=...`). ¡Cualquier persona que abra ese link en su navegador verá exactamente tu panorama completo!
 - 💾 **Persistencia Automática**: Los cambios se guardan en el navegador (`localStorage`) para que nunca pierdas tu trabajo.
-- 📊 **Exportación a Excel**: Descarga reportes completos con desglose día a día vía SheetJS.
+- 📊 **Exportación a Excel**: Descarga reportes consolidados del cuatrimestre y hojas individuales por mes vía SheetJS.
 - 📱 **Diseño Responsivo & Moderno**: Tipografía Google Fonts (*Plus Jakarta Sans* & *Inter*), micro-badges luminosos y visualización impecable en móviles, tablets y computadores.
 
 ---
