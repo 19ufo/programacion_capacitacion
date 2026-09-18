@@ -677,7 +677,7 @@
       background: #ffffff;
       border: 1px solid #eef2f6;
       border-radius: 9px;
-      height: 60px;
+      height: 68px;
       min-width: 0;
       max-width: 100%;
       width: 100%;
@@ -694,7 +694,7 @@
     }
 
     .single-mode-view .day-cell {
-      height: 78px;
+      height: 84px;
       padding: 6px 7px;
     }
 
@@ -820,7 +820,7 @@
     .festivo-mini-badge .fest-flag { flex-shrink: 0; font-size: 9px; }
     .festivo-mini-badge .fest-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
 
-    /* ESTILO VISTA CONSOLIDADA DE EQUIPO */
+    /* ESTILO VISTA CONSOLIDADA DE EQUIPO CON NOMBRES VISIBLES (PEPITAS + NOMBRE) */
     .team-consolidated-pill {
       display: flex;
       align-items: center;
@@ -838,6 +838,131 @@
       background: #f1f5f9;
       color: #334155;
       border: 1px solid #e2e8f0;
+    }
+
+    .member-pepita-chip {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 8.5px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 4px;
+      line-height: 1.2;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
+      transition: transform 0.1s ease;
+    }
+
+    .member-pepita-chip:hover {
+      transform: scale(1.02);
+    }
+
+    .member-pepita-chip .pep-dot {
+      font-size: 7px;
+      flex-shrink: 0;
+    }
+
+    .member-pepita-chip .pep-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .member-pepita-chip.pep-hab { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .member-pepita-chip.pep-bloq { background: #ffe4e6; color: #9f1239; border: 1px solid #fecdd3; }
+    .member-pepita-chip.pep-cap { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+    .member-pepita-chip.pep-comp { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+
+    /* BARRA DEDICADA DE FILTROS DE INTEGRANTES */
+    .team-filter-strip {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 7px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-card);
+    }
+
+    .filter-strip-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-strip-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .filter-user-pills-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-user-pill-btn {
+      border: 1px solid var(--border-light);
+      background: #ffffff;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.14s ease;
+      user-select: none;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .filter-user-pill-btn:hover {
+      border-color: #0f172a;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    .filter-user-pill-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+    }
+
+    .filter-user-pill-btn.btn-nuevo-user {
+      background: #f8fafc;
+      border-style: dashed;
+      color: #0284c7;
+      border-color: #7dd3fc;
+    }
+
+    .filter-user-pill-btn.btn-nuevo-user:hover {
+      background: #f0f9ff;
+      border-color: #0284c7;
     }
 
     /* Colores por Estado en Modo Individual */
@@ -1353,6 +1478,17 @@
       </div>
     </header>
 
+    <!-- BARRA VISIBLE DE FILTROS DE INTEGRANTES -->
+    <div class="team-filter-strip">
+      <div class="filter-strip-left">
+        <span class="filter-strip-title">👥 Filtrar Propuesta:</span>
+        <div id="contenedorFiltrosUsuarios" class="filter-user-pills-row">
+          <!-- Se llena dinámicamente: [ 👥 Todos ] [ 👤 Dexter ] [ 👤 Didi ] -->
+        </div>
+      </div>
+      <button class="filter-user-pill-btn btn-nuevo-user" onclick="abrirModalNuevoUsuario()">+ Registrar Integrante</button>
+    </div>
+
     <!-- 2. DOCK DE MODOS DE MARCADO & IDENTIDAD DEL USUARIO -->
     <nav class="control-dock">
       <div class="dock-mode-selection">
@@ -1779,6 +1915,27 @@
         chip.onclick = () => fijarFiltroUsuario(uid);
         chipsContainer.appendChild(chip);
       });
+
+      // 3. Botones visibles en la barra de filtros superior
+      const barPillsContainer = document.getElementById("contenedorFiltrosUsuarios");
+      if (barPillsContainer) {
+        barPillsContainer.innerHTML = "";
+
+        const pillTodos = document.createElement("button");
+        pillTodos.className = "filter-user-pill-btn" + (filtroUsuarioSeleccionado === "todos" ? " active" : "");
+        pillTodos.innerHTML = "<span>👥 Todos (Consolidado)</span>";
+        pillTodos.onclick = () => fijarFiltroUsuario("todos");
+        barPillsContainer.appendChild(pillTodos);
+
+        uids.forEach(uid => {
+          const u = datosEquipo[uid];
+          const pill = document.createElement("button");
+          pill.className = "filter-user-pill-btn" + (filtroUsuarioSeleccionado === uid ? " active" : "");
+          pill.innerHTML = `<span>👤 ${u.nombre || uid}${uid === miUsuarioId ? ' (Tú)' : ''}</span>`;
+          pill.onclick = () => fijarFiltroUsuario(uid);
+          barPillsContainer.appendChild(pill);
+        });
+      }
     }
 
     function manejarCambioFiltroUsuario() {
@@ -1944,38 +2101,58 @@
           `;
         }
 
-        // Caso A: Vista Consolidada de Todo el Equipo
+        // Caso A: Vista Consolidada de Todo el Equipo con Nombres Visibles
         if (filtroUsuarioSeleccionado === "todos") {
-          let habCount = 0;
-          let bloqCount = 0;
-          let capCount = 0;
-          const nombresHab = [];
-          const nombresBloq = [];
-          const nombresCap = [];
+          const registrosDelDia = [];
 
           Object.keys(datosEquipo).forEach(uid => {
             const u = datosEquipo[uid];
             if (u.dias && u.dias[k]) {
-              const st = u.dias[k].estado;
-              if (st === "habilitado") { habCount++; nombresHab.push(u.nombre || uid); }
-              if (st === "bloqueado") { bloqCount++; nombresBloq.push(u.nombre || uid); }
-              if (st === "capacitacion") { capCount++; nombresCap.push(`${u.nombre || uid} (${u.dias[k].detalle || 'Cap.'})`); }
+              registrosDelDia.push({
+                uid: uid,
+                nombre: u.nombre || uid,
+                estado: u.dias[k].estado,
+                detalle: u.dias[k].detalle || ""
+              });
             }
           });
 
-          if (habCount > 0 || bloqCount > 0 || capCount > 0) {
+          if (registrosDelDia.length > 0) {
             let tooltipTeam = `Día ${dia} de ${NOMBRES_MESES[m]}:\n`;
-            if (nombresHab.length) tooltipTeam += `🟢 Habilitados (${habCount}): ${nombresHab.join(', ')}\n`;
-            if (nombresBloq.length) tooltipTeam += `🔴 Bloqueados (${bloqCount}): ${nombresBloq.join(', ')}\n`;
-            if (nombresCap.length) tooltipTeam += `🟣 Capacitación (${capCount}): ${nombresCap.join(', ')}\n`;
+            registrosDelDia.forEach(r => {
+              let icono = "🟢";
+              if (r.estado === "bloqueado") icono = "🔴";
+              else if (r.estado === "capacitacion") icono = "🟣";
+              else if (r.estado === "compensatorio") icono = "🟠";
+              tooltipTeam += `${icono} ${r.nombre}: ${r.estado.toUpperCase()}${r.detalle ? ' (' + r.detalle + ')' : ''}\n`;
+            });
 
-            badgesHTML += `
-              <div class="team-consolidated-pill" title="${tooltipTeam}">
-                ${habCount > 0 ? `<span style="color:#10b981">🟢${habCount}</span>` : ''}
-                ${bloqCount > 0 ? `<span style="color:#f43f5e">🔴${bloqCount}</span>` : ''}
-                ${capCount > 0 ? `<span style="color:#8b5cf6">🟣${capCount}</span>` : ''}
-              </div>
-            `;
+            // Mostrar los integrantes directamente con su nombre y pepita
+            registrosDelDia.slice(0, 2).forEach(r => {
+              let chipClass = "pep-hab", icono = "🟢";
+              if (r.estado === "bloqueado") { chipClass = "pep-bloq"; icono = "🔴"; }
+              else if (r.estado === "capacitacion") { chipClass = "pep-cap"; icono = "🟣"; }
+              else if (r.estado === "compensatorio") { chipClass = "pep-comp"; icono = "🟠"; }
+
+              const texto = r.estado === "capacitacion" && r.detalle 
+                ? `${icono} ${r.nombre}: ${r.detalle}` 
+                : `${icono} ${r.nombre}`;
+
+              badgesHTML += `
+                <div class="member-pepita-chip ${chipClass}" title="${tooltipTeam}">
+                  <span class="pep-name">${texto}</span>
+                </div>
+              `;
+            });
+
+            if (registrosDelDia.length > 2) {
+              const extra = registrosDelDia.length - 2;
+              badgesHTML += `
+                <div class="team-consolidated-pill" style="font-size: 7.5px; padding: 1px 3px;" title="${tooltipTeam}">
+                  +${extra} más...
+                </div>
+              `;
+            }
           }
         } 
         // Caso B: Vista Individual Filtrada por Integrante
@@ -2296,8 +2473,174 @@
     }
 
     /* --------------------------------------------------------------------------
-       EXPORTACIÓN A EXCEL MULTI-INTEGRANTE
+       EXPORTACIÓN A EXCEL CON FORMA DE CALENDARIO VISUAL & MATRIZ DE EQUIPO
        -------------------------------------------------------------------------- */
+    function crearHojaCalendarioVisual(y, m) {
+      const festivos = obtenerFestivosColombia(y);
+      const totalDias = new Date(y, m + 1, 0).getDate();
+      const uids = Object.keys(datosEquipo);
+
+      // 1. Contar días hábiles reales del mes
+      let habilesMes = 0;
+      let festivosMes = 0;
+      for (let d = 1; d <= totalDias; d++) {
+        const ds = new Date(y, m, d).getDay();
+        const k = formaterClave(y, m, d);
+        if (festivos[k]) festivosMes++;
+        else if (ds !== 0 && ds !== 6) habilesMes++;
+      }
+
+      const nombreMesUpper = NOMBRES_MESES[m].toUpperCase();
+      const datosHoja = [
+        [`📅 CALENDARIO OPERATIVO • ${nombreMesUpper} ${y}`],
+        [`🇨🇴 Colombia • ${habilesMes} Días Hábiles Laborales • ${festivosMes} Festivos Nacionales`],
+        [`🏷️ CONVENCIONES: 🟢 Habilitado | 🔴 Bloqueado | 🟣 Capacitación | 🟠 Compensatorio | 🇨🇴 Festivo Oficial Ley Emiliani`],
+        [],
+        ["LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO", "DOMINGO"]
+      ];
+
+      const alturasFilas = [
+        { hpt: 26 }, // Título principal
+        { hpt: 18 }, // Subtítulo hábiles/festivos
+        { hpt: 18 }, // Barra de convenciones
+        { hpt: 8 },  // Espaciador
+        { hpt: 22 }  // Encabezados días de semana
+      ];
+
+      // Desplazamiento inicial (0 = Lunes, ..., 6 = Domingo)
+      const primerDia = new Date(y, m, 1);
+      const offsetInicio = (primerDia.getDay() + 6) % 7;
+
+      let diaActual = 1;
+      let semanaNum = 0;
+
+      while (diaActual <= totalDias) {
+        semanaNum++;
+        const filaNumeros = [];
+        const filaContenido = [];
+
+        for (let col = 0; col < 7; col++) {
+          if ((semanaNum === 1 && col < offsetInicio) || diaActual > totalDias) {
+            filaNumeros.push("");
+            filaContenido.push("");
+          } else {
+            const k = formaterClave(y, m, diaActual);
+            const esFestivo = festivos[k] || null;
+            const ds = new Date(y, m, diaActual).getDay();
+
+            // 1. Fila de Encabezado del Día
+            let textoNumero = `DÍA ${diaActual}`;
+            if (esFestivo) {
+              textoNumero = `🇨🇴 DÍA ${diaActual} • ${esFestivo.toUpperCase()}`;
+            } else if (ds === 0 || ds === 6) {
+              textoNumero = `🏖️ DÍA ${diaActual}`;
+            }
+            filaNumeros.push(textoNumero);
+
+            // 2. Fila de Contenido / Integrantes
+            const lineas = [];
+            if (esFestivo) {
+              lineas.push(`★ FESTIVO: ${esFestivo}`);
+            }
+
+            uids.forEach(uid => {
+              const u = datosEquipo[uid];
+              if (u.dias && u.dias[k]) {
+                const info = u.dias[k];
+                const nom = u.nombre || uid;
+                if (info.estado === "habilitado") {
+                  lineas.push(`🟢 ${nom}: Habilitado`);
+                } else if (info.estado === "bloqueado") {
+                  lineas.push(`🔴 ${nom}: Bloqueado`);
+                } else if (info.estado === "capacitacion") {
+                  lineas.push(`🟣 ${nom}: ${info.detalle || 'Capacitación'}`);
+                } else if (info.estado === "compensatorio") {
+                  lineas.push(`🟠 ${nom}: Compensatorio`);
+                }
+              }
+            });
+
+            if (lineas.length === 0) {
+              if (ds === 0 || ds === 6) lineas.push("Fin de semana");
+              else lineas.push("— Sin marcas");
+            }
+
+            filaContenido.push(lineas.join("\n"));
+            diaActual++;
+          }
+        }
+
+        datosHoja.push(filaNumeros);
+        alturasFilas.push({ hpt: 20 });
+
+        datosHoja.push(filaContenido);
+        // Calcular altura proporcional a la cantidad de líneas en la semana para que no se oculte nada
+        const maxLineasSemana = Math.max(2, ...filaContenido.map(c => (c.match(/\n/g) || []).length + 1));
+        alturasFilas.push({ hpt: Math.max(52, maxLineasSemana * 16 + 10) });
+
+        datosHoja.push([]); // Espaciado entre semanas
+        alturasFilas.push({ hpt: 8 });
+      }
+
+      // Resumen del mes al pie del calendario visual
+      datosHoja.push([]);
+      alturasFilas.push({ hpt: 12 });
+
+      datosHoja.push([`📊 RESUMEN MENSUAL DE DISPONIBILIDAD • ${nombreMesUpper} ${y}`]);
+      alturasFilas.push({ hpt: 22 });
+
+      datosHoja.push(["INTEGRANTE", "DÍAS HÁBILES MES", "HABILITADOS (🟢)", "BLOQUEADOS (🔴)", "CAPACITACIONES (🟣)", "COMPENSATORIOS (🟠)", "% DISPONIBILIDAD"]);
+      alturasFilas.push({ hpt: 20 });
+
+      let sumHab = 0, sumBloq = 0, sumCap = 0, sumComp = 0;
+
+      uids.forEach(uid => {
+        const u = datosEquipo[uid];
+        let hab = 0, bloq = 0, cap = 0, comp = 0;
+        for (let d = 1; d <= totalDias; d++) {
+          const k = formaterClave(y, m, d);
+          if (u.dias && u.dias[k]) {
+            if (u.dias[k].estado === "habilitado") hab++;
+            if (u.dias[k].estado === "bloqueado") bloq++;
+            if (u.dias[k].estado === "capacitacion") cap++;
+            if (u.dias[k].estado === "compensatorio") comp++;
+          }
+        }
+        sumHab += hab;
+        sumBloq += bloq;
+        sumCap += cap;
+        sumComp += comp;
+
+        const pct = habilesMes > 0 ? `${Math.round((hab / habilesMes) * 100)}%` : "0%";
+        datosHoja.push([u.nombre || uid, habilesMes, hab, bloq, cap, comp, pct]);
+        alturasFilas.push({ hpt: 18 });
+      });
+
+      // Fila de totales del equipo
+      const pctTotal = (habilesMes * uids.length) > 0 ? `${Math.round((sumHab / (habilesMes * uids.length)) * 100)}%` : "0%";
+      datosHoja.push(["TOTALES EQUIPO", habilesMes * uids.length, sumHab, sumBloq, sumCap, sumComp, pctTotal]);
+      alturasFilas.push({ hpt: 20 });
+
+      const ws = XLSX.utils.aoa_to_sheet(datosHoja);
+
+      // Anchos de columnas generosos y equilibrados
+      ws["!cols"] = [
+        { wch: 26 }, { wch: 26 }, { wch: 26 }, { wch: 26 }, { wch: 26 }, { wch: 22 }, { wch: 22 }
+      ];
+
+      // Alturas fijas y dinámicas para evitar que Excel colapse las celdas
+      ws["!rows"] = alturasFilas;
+
+      // Combinaciones de celdas para encabezados (A1:G1, A2:G2, A3:G3)
+      ws["!merges"] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 6 } },
+        { s: { r: 1, c: 0 }, e: { r: 1, c: 6 } },
+        { s: { r: 2, c: 0 }, e: { r: 2, c: 6 } }
+      ];
+
+      return ws;
+    }
+
     function exportarAExcel() {
       if (typeof XLSX === "undefined") {
         alert("Cargando librería Excel, por favor intenta en unos segundos.");
@@ -2305,11 +2648,21 @@
       }
 
       const festivos = obtenerFestivosColombia(anioActual);
-      const mesesAExportar = modoVista === "panorama" ? MESES_PANORAMA : [mesActual];
+      // Siempre incluimos los 4 meses del cuatrimestre para que el libro quede 100% completo
+      const mesesAExportar = MESES_PANORAMA; // [8, 9, 10, 11] = Sep, Oct, Nov, Dic
       const uids = Object.keys(datosEquipo);
 
-      // Hoja 1: Matriz Comparativa del Equipo
-      const encabezadosMatriz = ["FECHA", "MES", "DÍA", "FESTIVO OFICIAL"];
+      const wb = XLSX.utils.book_new();
+
+      // 1. Hojas con forma de calendario visual para cada mes (Septiembre, Octubre, Noviembre, Diciembre)
+      mesesAExportar.forEach(m => {
+        const wsCal = crearHojaCalendarioVisual(anioActual, m);
+        const nombreHoja = `${NOMBRES_MESES[m]} ${anioActual}`.substring(0, 31);
+        XLSX.utils.book_append_sheet(wb, wsCal, nombreHoja);
+      });
+
+      // 2. Hoja de Matriz Comparativa del Equipo (Día a Día)
+      const encabezadosMatriz = ["FECHA (AAAA-MM-DD)", "MES", "DÍA", "DÍA SEMANA", "FESTIVO OFICIAL (COLOMBIA)"];
       uids.forEach(uid => encabezadosMatriz.push((datosEquipo[uid].nombre || uid).toUpperCase()));
 
       const filasMatriz = [encabezadosMatriz];
@@ -2319,15 +2672,20 @@
         for (let d = 1; d <= totalDias; d++) {
           const k = formaterClave(anioActual, m, d);
           const fFest = festivos[k] || "";
+          const fechaObj = new Date(anioActual, m, d);
+          const diaSemanaTexto = DIAS_SEMANA[(fechaObj.getDay() + 6) % 7];
 
-          const fila = [k, NOMBRES_MESES[m], d, fFest];
+          const fila = [k, NOMBRES_MESES[m], d, diaSemanaTexto, fFest];
 
           uids.forEach(uid => {
             const u = datosEquipo[uid];
             let estado = "Normal";
             if (u.dias && u.dias[k]) {
-              estado = u.dias[k].estado;
-              if (u.dias[k].detalle) estado += ` (${u.dias[k].detalle})`;
+              const info = u.dias[k];
+              if (info.estado === "habilitado") estado = "🟢 Habilitado";
+              else if (info.estado === "bloqueado") estado = "🔴 Bloqueado";
+              else if (info.estado === "capacitacion") estado = `🟣 ${info.detalle || 'Capacitación'}`;
+              else if (info.estado === "compensatorio") estado = "🟠 Compensatorio";
             }
             fila.push(estado);
           });
@@ -2336,13 +2694,20 @@
         }
       });
 
-      // Hoja 2: Resumen por Integrante
+      const wsMatriz = XLSX.utils.aoa_to_sheet(filasMatriz);
+      wsMatriz["!cols"] = [{ wch: 18 }, { wch: 14 }, { wch: 6 }, { wch: 14 }, { wch: 30 }];
+      uids.forEach(() => wsMatriz["!cols"].push({ wch: 22 }));
+      XLSX.utils.book_append_sheet(wb, wsMatriz, "Matriz Detallada");
+
+      // 3. Hoja de Resumen General por Integrante (Todo el Cuatrimestre)
       const filasResumen = [
-        ["RESUMEN DE DISPONIBILIDAD - EQUIPO", `${anioActual}`],
-        ["Fecha del reporte:", new Date().toLocaleString()],
+        [`📊 RESUMEN CONSOLIDADO DEL EQUIPO • CUATRIMESTRE ${anioActual}`],
+        [`Generado el: ${new Date().toLocaleString()}`],
         [],
-        ["INTEGRANTE", "DÍAS HABILITADOS", "BLOQUEADOS", "CAPACITACIONES", "COMPENSATORIOS"]
+        ["INTEGRANTE", "DÍAS HABILITADOS (🟢)", "BLOQUEADOS (🔴)", "CAPACITACIONES (🟣)", "COMPENSATORIOS (🟠)", "TOTAL REGISTROS"]
       ];
+
+      let totH = 0, totB = 0, totC = 0, totComp = 0;
 
       uids.forEach(uid => {
         const u = datosEquipo[uid];
@@ -2355,15 +2720,33 @@
             if (item.estado === "compensatorio") comp++;
           });
         }
-        filasResumen.push([u.nombre || uid, h, b, c, comp]);
+        totH += h;
+        totB += b;
+        totC += c;
+        totComp += comp;
+        const totalPersona = h + b + c + comp;
+        filasResumen.push([u.nombre || uid, h, b, c, comp, totalPersona]);
       });
 
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasMatriz), "Matriz Comparativa Equipo");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasResumen), "Resumen por Integrante");
+      filasResumen.push(["TOTALES EQUIPO", totH, totB, totC, totComp, totH + totB + totC + totComp]);
 
-      XLSX.writeFile(wb, `Disponibilidad_Equipo_Colombia_${anioActual}.xlsx`);
-      mostrarToast("Reporte de equipo descargado en Excel", "📊");
+      const wsResumen = XLSX.utils.aoa_to_sheet(filasResumen);
+      wsResumen["!cols"] = [{ wch: 26 }, { wch: 22 }, { wch: 18 }, { wch: 22 }, { wch: 22 }, { wch: 18 }];
+      wsResumen["!rows"] = [
+        { hpt: 26 },
+        { hpt: 18 },
+        { hpt: 10 },
+        { hpt: 22 }
+      ];
+      wsResumen["!merges"] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } },
+        { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } }
+      ];
+
+      XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen General");
+
+      XLSX.writeFile(wb, `Calendario_Operativo_Equipo_${anioActual}.xlsx`);
+      mostrarToast("¡Excel descargado con diseño de calendario, matriz y resumen! 📊", "📥");
     }
 
     function compartirEnlaceWeb() {
