@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calendario Operativo & Disponibilidad Colombia — Panorama Sep a Dic</title>
-  <meta name="description" content="Calendario ejecutivo de disponibilidad, bloqueos, capacitaciones y festivos de Colombia. Panorama cuatrimestral interactivo con diseño contemporáneo 2026." />
+  <title>Calendario Operativo & Disponibilidad Colombia — Equipo en Tiempo Real</title>
+  <meta name="description" content="Planificador colaborativo de disponibilidad y capacitaciones en tiempo real con Firebase. Filtro individual por integrante y vista consolidada de equipo." />
 
   <!-- Tipografías de Alta Gama (Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Firebase SDK (Compatibilidad UMD para navegador directo) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
   <!-- SheetJS para exportación profesional a Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -24,12 +28,12 @@
 
       /* Fondo y Lienzo */
       --bg-canvas: #f8fafc;
-      --bg-surface: rgba(255, 255, 255, 0.92);
+      --bg-surface: rgba(255, 255, 255, 0.94);
       --bg-surface-solid: #ffffff;
       --bg-subtle: #f1f5f9;
 
       /* Bordes */
-      --border-light: rgba(226, 232, 240, 0.85);
+      --border-light: rgba(226, 232, 240, 0.9);
       --border-hover: #cbd5e1;
       --border-strong: #94a3b8;
 
@@ -39,36 +43,36 @@
       --text-muted: #94a3b8;
       --text-inverse: #ffffff;
 
-      /* PALETA DE ESTADOS DE ALTA DEFINICIÓN (PASTELES SUAVES & ELEGANTES) */
-      /* 🟢 Habilitado (Menta Esmeralda Soft) */
+      /* PALETA DE ESTADOS PASTEL DE ALTA DEFINICIÓN */
+      /* 🟢 Habilitado (Menta Esmeralda) */
       --hab-bg: #ecfdf5;
       --hab-border: #a7f3d0;
       --hab-text: #065f46;
       --hab-dot: #10b981;
       --hab-chip: #d1fae5;
 
-      /* 🔴 Bloqueado (Coral Rosa Soft) */
+      /* 🔴 Bloqueado (Coral Rosa) */
       --bloq-bg: #fff1f2;
       --bloq-border: #fecdd3;
       --bloq-text: #9f1239;
       --bloq-dot: #f43f5e;
       --bloq-chip: #ffe4e6;
 
-      /* 🟣 Capacitación (Iris Lavanda Soft) */
+      /* 🟣 Capacitación (Iris Lavanda) */
       --cap-bg: #f5f3ff;
       --cap-border: #ddd6fe;
       --cap-text: #5b21b6;
       --cap-dot: #8b5cf6;
       --cap-chip: #ede9fe;
 
-      /* 🟠 Compensatorio (Melocotón Dorado Soft) */
+      /* 🟠 Compensatorio (Melocotón Dorado) */
       --comp-bg: #fff7ed;
       --comp-border: #fed7aa;
       --comp-text: #9a3412;
       --comp-dot: #f97316;
       --comp-chip: #ffedd5;
 
-      /* 🇨🇴 Festivos Oficiales Colombia (Vainilla Champagne Soft) */
+      /* 🇨🇴 Festivos Oficiales Colombia (Vainilla Champagne) */
       --fest-bg: #fffbeb;
       --fest-border: #fef08a;
       --fest-text: #854d0e;
@@ -82,7 +86,6 @@
       --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04);
       --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.02);
       --shadow-elevated: 0 16px 36px -4px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.03);
-      --shadow-dock: 0 8px 30px rgba(0, 0, 0, 0.06);
 
       --radius-sm: 8px;
       --radius-md: 12px;
@@ -113,24 +116,13 @@
     }
 
     /* Scrollbars elegantes */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: var(--radius-pill);
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: var(--radius-pill); }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    /* CONTENEDOR PRINCIPAL FLUIDO */
     .app-wrapper {
-      max-width: 1540px;
+      max-width: 1560px;
       margin: 0 auto;
       padding: 12px 18px;
       display: flex;
@@ -139,7 +131,7 @@
     }
 
     /* ==========================================================================
-       1. CABECERA FLOTANTE EJECUTIVA (NAVBAR)
+       1. CABECERA FLOTANTE EJECUTIVA CON SELECTOR DE INTEGRANTE / FILTRO
        ========================================================================== */
     .top-navbar {
       background: var(--bg-surface);
@@ -147,7 +139,7 @@
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-lg);
-      padding: 8px 16px;
+      padding: 9px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -193,29 +185,83 @@
       font-weight: 500;
     }
 
-    .country-tag {
+    .status-cloud-badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 2px 7px;
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      border-radius: var(--radius-pill);
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .cloud-pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* FILTRO DE INTEGRANTE / EQUIPO */
+    .user-filter-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 4px 10px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .user-filter-box label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .select-member-dropdown {
+      border: none;
+      background: transparent;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      cursor: pointer;
+      outline: none;
+      max-width: 220px;
+    }
+
+    .btn-add-member {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
       color: #334155;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .btn-add-member:hover {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
     }
 
-    .col-flag {
-      display: inline-block;
-      width: 12px;
-      height: 8px;
-      border-radius: 1px;
-      background: linear-gradient(to bottom, #ffcd00 0%, #ffcd00 50%, #003087 50%, #003087 75%, #c8102e 75%, #c8102e 100%);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-
-    /* SELECTOR DE VISTA SEGMENTADO (PILL TOGGLE) */
+    /* SELECTOR DE VISTA SEGMENTADO */
     .view-segment-control {
       display: inline-flex;
       align-items: center;
@@ -229,21 +275,17 @@
     .view-btn {
       border: none;
       background: transparent;
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 9px;
       font-family: var(--font-display);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--text-secondary);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.16s ease;
-    }
-
-    .view-btn:hover {
-      color: var(--text-main);
     }
 
     .view-btn.active {
@@ -256,7 +298,7 @@
     .date-nav-capsule {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       background: #ffffff;
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
@@ -267,8 +309,8 @@
     .btn-nav-step {
       background: transparent;
       border: none;
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       border-radius: 6px;
       color: var(--text-secondary);
       cursor: pointer;
@@ -294,10 +336,10 @@
       color: var(--text-main);
       cursor: pointer;
       outline: none;
-      padding: 0 4px;
+      padding: 0 3px;
     }
 
-    /* BOTONES DE ACCIÓN PRINCIPALES */
+    /* BOTONES DE ACCIÓN */
     .nav-actions-group {
       display: flex;
       align-items: center;
@@ -307,14 +349,14 @@
 
     .btn-nav-action {
       font-family: var(--font-display);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
-      padding: 6px 13px;
+      padding: 6px 12px;
       border-radius: var(--radius-sm);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.15s ease;
       border: 1px solid transparent;
       user-select: none;
@@ -327,12 +369,7 @@
     .btn-share-primary {
       background: #0f172a;
       color: #ffffff;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
-    }
-
-    .btn-share-primary:hover {
-      background: #1e293b;
-      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
     }
 
     .btn-excel-export {
@@ -342,11 +379,6 @@
       box-shadow: var(--shadow-subtle);
     }
 
-    .btn-excel-export:hover {
-      background: #ecfdf5;
-      border-color: #a7f3d0;
-    }
-
     .btn-reset-clean {
       background: #ffffff;
       border-color: var(--border-light);
@@ -354,13 +386,8 @@
       box-shadow: var(--shadow-subtle);
     }
 
-    .btn-reset-clean:hover {
-      background: #f8fafc;
-      color: var(--text-main);
-    }
-
     /* ==========================================================================
-       2. ISLA DE HERRAMIENTAS & MODOS DE MARCADO (DOCK ELEGANTE)
+       2. ISLA DE HERRAMIENTAS & IDENTIDAD DEL USUARIO (DOCK)
        ========================================================================== */
     .control-dock {
       background: var(--bg-surface);
@@ -384,15 +411,27 @@
       flex-wrap: wrap;
     }
 
-    .dock-label-hint {
+    .dock-identity-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: #0f172a;
+      color: #ffffff;
       font-size: 11px;
       font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+    }
+
+    .btn-switch-identity {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: #ffffff;
+      font-size: 10px;
+      cursor: pointer;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
     }
 
     .mode-pills-row {
@@ -405,12 +444,12 @@
     .mode-pill-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
+      gap: 5px;
+      padding: 5px 11px;
       border-radius: var(--radius-pill);
       border: 1.5px solid transparent;
       cursor: pointer;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
       user-select: none;
@@ -424,13 +463,12 @@
     }
 
     .mode-pill-btn .mode-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      transition: transform 0.15s ease;
     }
 
-    /* Estilos activos por modo */
+    /* Modos Activos */
     .mode-pill-btn.mode-hab { border-color: #d1fae5; color: var(--hab-text); }
     .mode-pill-btn.mode-hab .mode-dot { background: var(--hab-dot); }
     .mode-pill-btn.mode-hab.active {
@@ -438,7 +476,6 @@
       border-color: var(--hab-dot);
       box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
     }
-    .mode-pill-btn.mode-hab.active .mode-dot { transform: scale(1.25); }
 
     .mode-pill-btn.mode-bloq { border-color: #ffe4e6; color: var(--bloq-text); }
     .mode-pill-btn.mode-bloq .mode-dot { background: var(--bloq-dot); }
@@ -447,7 +484,6 @@
       border-color: var(--bloq-dot);
       box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
     }
-    .mode-pill-btn.mode-bloq.active .mode-dot { transform: scale(1.25); }
 
     .mode-pill-btn.mode-cap { border-color: #ede9fe; color: var(--cap-text); }
     .mode-pill-btn.mode-cap .mode-dot { background: var(--cap-dot); }
@@ -456,7 +492,6 @@
       border-color: var(--cap-dot);
       box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
     }
-    .mode-pill-btn.mode-cap.active .mode-dot { transform: scale(1.25); }
 
     .mode-pill-btn.mode-comp { border-color: #ffedd5; color: var(--comp-text); }
     .mode-pill-btn.mode-comp .mode-dot { background: var(--comp-dot); }
@@ -465,7 +500,6 @@
       border-color: var(--comp-dot);
       box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
     }
-    .mode-pill-btn.mode-comp.active .mode-dot { transform: scale(1.25); }
 
     .mode-pill-btn.mode-clear { border-color: #e2e8f0; color: #64748b; }
     .mode-pill-btn.mode-clear .mode-dot { background: #94a3b8; }
@@ -475,12 +509,12 @@
       box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
     }
 
-    /* MINI METRICAS INTEGRADAS EN EL DOCK */
+    /* MINI MÉTRICAS DEL DOCK */
     .dock-live-counters {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 11.5px;
+      gap: 8px;
+      font-size: 11px;
       color: var(--text-secondary);
       font-weight: 600;
     }
@@ -488,7 +522,7 @@
     .counter-tag {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       padding: 3px 8px;
       border-radius: var(--radius-pill);
       background: #ffffff;
@@ -498,7 +532,7 @@
     .counter-badge-num {
       font-family: var(--font-display);
       font-weight: 800;
-      font-size: 12px;
+      font-size: 11.5px;
     }
 
     .counter-hab { color: var(--hab-text); }
@@ -507,22 +541,21 @@
     .counter-fest { color: var(--fest-text); }
 
     /* ==========================================================================
-       3. ESTRUCTURA PRINCIPAL: GRILLA DE CALENDARIO + AGENDA LATERAL
+       3. ESTRUCTURA PRINCIPAL: CALENDARIOS + AGENDA
        ========================================================================== */
     .main-grid-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 320px;
+      grid-template-columns: minmax(0, 1fr) 325px;
       gap: 14px;
       align-items: start;
     }
 
-    @media (max-width: 1160px) {
+    @media (max-width: 1180px) {
       .main-grid-layout {
         grid-template-columns: 1fr;
       }
     }
 
-    /* SUPERFICIE DE CALENDARIOS */
     .calendars-board {
       display: flex;
       flex-direction: column;
@@ -530,7 +563,6 @@
       min-width: 0;
     }
 
-    /* PANORAMA 4 MESES (GRID 2x2 RIGUROSO) */
     .panorama-quad-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -538,13 +570,13 @@
       width: 100%;
     }
 
-    @media (max-width: 820px) {
+    @media (max-width: 840px) {
       .panorama-quad-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    /* TARJETA DE MES (REFINAMIENTO TOTAL) */
+    /* TARJETA DE MES */
     .month-card-lux {
       background: var(--bg-surface);
       backdrop-filter: blur(16px);
@@ -566,7 +598,6 @@
       box-shadow: var(--shadow-elevated);
     }
 
-    /* Encabezado del mes */
     .month-card-header {
       display: flex;
       align-items: center;
@@ -605,7 +636,7 @@
       border-radius: var(--radius-pill);
     }
 
-    /* FILA DE NOMBRES DE DÍA (LUN, MAR, MIÉ...) */
+    /* FILA DE NOMBRES DE DÍA (7 COLUMNAS BLOQUEADAS MATEMÁTICAMENTE) */
     .weekdays-header-row {
       display: grid;
       grid-template-columns: repeat(7, calc((100% - 30px) / 7));
@@ -633,9 +664,7 @@
       color: #94a3b8;
     }
 
-    /* ==========================================================================
-       GRILLA DE CELDAS — SIMETRÍA MATEMÁTICA Y SIN DEFORMACIONES
-       ========================================================================== */
+    /* GRILLA DE CELDAS DE DÍAS (100% BLOQUEO MATEMÁTICO CONTRA DEFORMACIÓN) */
     .month-days-grid {
       display: grid;
       grid-template-columns: repeat(7, calc((100% - 30px) / 7));
@@ -664,7 +693,6 @@
       user-select: none;
     }
 
-    /* En vista mensual detallada las celdas son más amplias */
     .single-mode-view .day-cell {
       height: 78px;
       padding: 6px 7px;
@@ -693,7 +721,7 @@
       box-shadow: 0 0 0 1.5px rgba(59, 130, 246, 0.6);
     }
 
-    /* Línea superior del día (Número + Hoy) */
+    /* Línea superior del día */
     .day-cell-top {
       display: flex;
       align-items: center;
@@ -724,7 +752,7 @@
       letter-spacing: 0.02em;
     }
 
-    /* Contenedor de micro-etiquetas del día */
+    /* Micro-etiquetas del día */
     .day-badges-stack {
       display: flex;
       flex-direction: column;
@@ -735,14 +763,13 @@
       overflow: hidden;
     }
 
-    /* Píldora de estado (Texto truncado seguro) */
     .status-mini-pill {
       display: flex;
       align-items: center;
       gap: 3.5px;
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 700;
-      padding: 1.5px 5px;
+      padding: 1.5px 4px;
       border-radius: 4px;
       line-height: 1.2;
       width: 100%;
@@ -769,14 +796,14 @@
       min-width: 0;
     }
 
-    /* 🇨🇴 Píldora de Festivo Oficial Colombia */
+    /* Micro-etiqueta de Festivo Colombia */
     .festivo-mini-badge {
       display: flex;
       align-items: center;
       gap: 3px;
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 700;
-      padding: 1.5px 5px;
+      padding: 1px 4px;
       border-radius: 4px;
       background: var(--fest-chip);
       color: var(--fest-text);
@@ -790,58 +817,44 @@
       box-sizing: border-box;
     }
 
-    .festivo-mini-badge .fest-flag {
-      flex-shrink: 0;
-      font-size: 9px;
-    }
+    .festivo-mini-badge .fest-flag { flex-shrink: 0; font-size: 9px; }
+    .festivo-mini-badge .fest-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
 
-    .festivo-mini-badge .fest-text {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex: 1;
+    /* ESTILO VISTA CONSOLIDADA DE EQUIPO */
+    .team-consolidated-pill {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 8px;
+      font-weight: 800;
+      padding: 1.5px 4px;
+      border-radius: 4px;
+      width: 100%;
       min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
     }
 
-    /* COLORES APLICADOS A CELDAS SEGÚN ESTADO */
-    .day-cell.status-hab {
-      background: var(--hab-bg);
-      border-color: var(--hab-border);
-    }
-    .day-cell.status-hab .status-mini-pill {
-      background: var(--hab-chip);
-      color: var(--hab-text);
-    }
+    /* Colores por Estado en Modo Individual */
+    .day-cell.status-hab { background: var(--hab-bg); border-color: var(--hab-border); }
+    .day-cell.status-hab .status-mini-pill { background: var(--hab-chip); color: var(--hab-text); }
     .day-cell.status-hab .status-glow { background: var(--hab-dot); box-shadow: 0 0 4px var(--hab-dot); }
 
-    .day-cell.status-bloq {
-      background: var(--bloq-bg);
-      border-color: var(--bloq-border);
-    }
-    .day-cell.status-bloq .status-mini-pill {
-      background: var(--bloq-chip);
-      color: var(--bloq-text);
-    }
+    .day-cell.status-bloq { background: var(--bloq-bg); border-color: var(--bloq-border); }
+    .day-cell.status-bloq .status-mini-pill { background: var(--bloq-chip); color: var(--bloq-text); }
     .day-cell.status-bloq .status-glow { background: var(--bloq-dot); box-shadow: 0 0 4px var(--bloq-dot); }
 
-    .day-cell.status-cap {
-      background: var(--cap-bg);
-      border-color: var(--cap-border);
-    }
-    .day-cell.status-cap .status-mini-pill {
-      background: var(--cap-chip);
-      color: var(--cap-text);
-    }
+    .day-cell.status-cap { background: var(--cap-bg); border-color: var(--cap-border); }
+    .day-cell.status-cap .status-mini-pill { background: var(--cap-chip); color: var(--cap-text); }
     .day-cell.status-cap .status-glow { background: var(--cap-dot); box-shadow: 0 0 4px var(--cap-dot); }
 
-    .day-cell.status-comp {
-      background: var(--comp-bg);
-      border-color: var(--comp-border);
-    }
-    .day-cell.status-comp .status-mini-pill {
-      background: var(--comp-chip);
-      color: var(--comp-text);
-    }
+    .day-cell.status-comp { background: var(--comp-bg); border-color: var(--comp-border); }
+    .day-cell.status-comp .status-mini-pill { background: var(--comp-chip); color: var(--comp-text); }
     .day-cell.status-comp .status-glow { background: var(--comp-dot); box-shadow: 0 0 4px var(--comp-dot); }
 
     .day-cell.is-holiday:not(.status-hab):not(.status-bloq):not(.status-cap):not(.status-comp) {
@@ -850,7 +863,7 @@
     }
 
     /* ==========================================================================
-       4. BARRA LATERAL: AGENDA CRONOLÓGICA & DETALLES EJECUTIVOS
+       4. BARRA LATERAL: AGENDA & RESUMEN DEL EQUIPO
        ========================================================================== */
     .sidebar-agenda-panel {
       background: var(--bg-surface);
@@ -896,6 +909,61 @@
       border-radius: var(--radius-pill);
     }
 
+    /* Integrantes del Equipo (Chips) */
+    .team-members-shelf {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .team-shelf-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .team-chips-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .member-mini-chip {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.12s ease;
+    }
+
+    .member-mini-chip:hover {
+      border-color: #0f172a;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    .member-mini-chip.active-member {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
     /* Filtros de la agenda */
     .agenda-tabs-bar {
       display: flex;
@@ -931,7 +999,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 480px;
+      max-height: 400px;
       overflow-y: auto;
       padding-right: 2px;
     }
@@ -959,8 +1027,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 8px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -977,11 +1045,10 @@
     }
 
     .event-date-month {
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 700;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-top: 1px;
     }
 
     .event-info-col {
@@ -991,7 +1058,7 @@
 
     .event-title-line {
       font-family: var(--font-display);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--text-main);
       overflow: hidden;
@@ -1000,7 +1067,7 @@
     }
 
     .event-desc-line {
-      font-size: 10.5px;
+      font-size: 10px;
       color: var(--text-secondary);
       margin-top: 1px;
       display: flex;
@@ -1010,7 +1077,7 @@
 
     .event-badge-pill {
       display: inline-block;
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 700;
       padding: 1px 5px;
       border-radius: 3px;
@@ -1027,7 +1094,7 @@
       border: none;
       color: #94a3b8;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       padding: 2px 4px;
       border-radius: 4px;
       transition: all 0.12s ease;
@@ -1037,31 +1104,13 @@
       background: #fee2e2;
     }
 
-    /* Caja de instrucciones de sincronización */
-    .sync-info-box {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: var(--radius-md);
-      padding: 10px;
-      font-size: 11px;
-      color: var(--text-secondary);
-      line-height: 1.45;
-    }
-
-    .sync-info-box strong {
-      color: var(--text-main);
-    }
-
     /* ==========================================================================
-       5. MODAL PARA PROGRAMAR CAPACITACIÓN (MICRO-INTERACCIÓN ELEGANTE)
+       5. MODALES (REGISTRO DE USUARIO & CAPACITACIÓN)
        ========================================================================== */
     .modal-backdrop {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(15, 23, 42, 0.45);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       display: flex;
@@ -1090,9 +1139,7 @@
       transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .modal-backdrop.open .modal-card-box {
-      transform: scale(1);
-    }
+    .modal-backdrop.open .modal-card-box { transform: scale(1); }
 
     .modal-header-line {
       display: flex;
@@ -1126,10 +1173,7 @@
       transition: all 0.12s ease;
     }
 
-    .btn-close-modal:hover {
-      background: #f1f5f9;
-      color: var(--text-main);
-    }
+    .btn-close-modal:hover { background: #f1f5f9; color: var(--text-main); }
 
     .modal-body-form {
       display: flex;
@@ -1158,8 +1202,8 @@
     }
 
     .form-control-input:focus {
-      border-color: #8b5cf6;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+      border-color: #0f172a;
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
     }
 
     .presets-tags-row {
@@ -1180,11 +1224,7 @@
       cursor: pointer;
       transition: all 0.12s ease;
     }
-
-    .preset-pill:hover {
-      background: #ede9fe;
-      transform: translateY(-1px);
-    }
+    .preset-pill:hover { background: #ede9fe; transform: translateY(-1px); }
 
     .modal-actions-row {
       display: flex;
@@ -1209,7 +1249,7 @@
     }
 
     .btn-modal-save {
-      background: #8b5cf6;
+      background: #0f172a;
       color: #ffffff;
       border: none;
       padding: 7px 16px;
@@ -1218,16 +1258,11 @@
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
     }
+    .btn-modal-save:hover { background: #1e293b; }
 
-    .btn-modal-save:hover {
-      background: #7c3aed;
-    }
-
-    /* ==========================================================================
-       6. TOAST NOTIFICACIÓN FLOTANTE
-       ========================================================================== */
+    /* TOAST FLOTANTE */
     .toast-popup {
       position: fixed;
       bottom: 24px;
@@ -1255,11 +1290,6 @@
       transform: translateY(0);
       pointer-events: auto;
     }
-
-    /* TOOLTIP FLOTANTE NATIVO */
-    [data-tooltip] {
-      position: relative;
-    }
   </style>
 </head>
 <body>
@@ -1273,13 +1303,25 @@
         <div class="brand-headlines">
           <h1>
             Calendario Operativo
-            <span class="country-tag"><span class="col-flag"></span> Colombia</span>
+            <span id="badgeConexionFirebase" class="status-cloud-badge" title="Conectado a Firebase Realtime Database">
+              <span class="cloud-pulse-dot"></span> En Vivo
+            </span>
           </h1>
-          <p>Disponibilidad, Bloqueos, Capacitaciones & Festivos Oficiales</p>
+          <p>Disponibilidad, Bloqueos & Capacitaciones en Tiempo Real</p>
         </div>
       </div>
 
-      <!-- Selector de Vista Segmentado -->
+      <!-- SELECTOR / FILTRO DE INTEGRANTE DEL EQUIPO -->
+      <div class="user-filter-box">
+        <label for="selectFiltroUsuario">👥 Propuesta de:</label>
+        <select id="selectFiltroUsuario" class="select-member-dropdown" onchange="manejarCambioFiltroUsuario()">
+          <option value="todos">👥 Consolidado del Equipo (Todos)</option>
+          <!-- Se llenará dinámicamente con los usuarios de Firebase -->
+        </select>
+        <button class="btn-add-member" onclick="abrirModalNuevoUsuario()" title="Añadir a un compañero al equipo">+ Nuevo</button>
+      </div>
+
+      <!-- Selector de Vista (Panorama vs Mes) -->
       <div class="view-segment-control">
         <button id="tabVistaPanorama" class="view-btn active" onclick="cambiarTipoVista('panorama')">
           <span>📅 Panorama (Sep – Dic)</span>
@@ -1299,22 +1341,28 @@
 
       <!-- Acciones Rápidas -->
       <div class="nav-actions-group">
-        <button class="btn-nav-action btn-share-primary" onclick="compartirEnlaceWeb()" title="Generar enlace permanente con datos">
-          <span>🔗 Compartir Calendario</span>
+        <button class="btn-nav-action btn-share-primary" onclick="compartirEnlaceWeb()" title="Copiar enlace para que tus compañeros entren y marquen">
+          <span>🔗 Compartir Link</span>
         </button>
-        <button class="btn-nav-action btn-excel-export" onclick="exportarAExcel()" title="Descargar reporte en Excel">
+        <button class="btn-nav-action btn-excel-export" onclick="exportarAExcel()" title="Descargar reporte comparativo del equipo en Excel">
           <span>📊 Excel</span>
         </button>
-        <button class="btn-nav-action btn-reset-clean" onclick="reiniciarMarcaciones()" title="Limpiar todas las selecciones">
+        <button class="btn-nav-action btn-reset-clean" onclick="reiniciarMarcaciones()" title="Limpiar los días marcados de la propuesta actual">
           <span>🧹 Limpiar</span>
         </button>
       </div>
     </header>
 
-    <!-- 2. DOCK DE MODOS DE MARCADO & MÉTRICAS LIVE -->
+    <!-- 2. DOCK DE MODOS DE MARCADO & IDENTIDAD DEL USUARIO -->
     <nav class="control-dock">
       <div class="dock-mode-selection">
-        <span class="dock-label-hint">Modo al hacer clic:</span>
+        <!-- Identidad de quién está marcando -->
+        <div class="dock-identity-chip">
+          <span>✍️ Marcando como:</span>
+          <strong id="labelMiNombreActivo">Tú</strong>
+          <button class="btn-switch-identity" onclick="abrirModalCambiarMiNombre()" title="Cambiar el nombre con el que marcas">Cambiar</button>
+        </div>
+
         <div class="mode-pills-row">
           <button id="btnModoHab" class="mode-pill-btn mode-hab active" onclick="fijarModo('habilitado')">
             <span class="mode-dot"></span>
@@ -1362,13 +1410,24 @@
       <!-- Contenedor donde se montan los meses -->
       <section id="contenedorCalendarios" class="calendars-board"></section>
 
-      <!-- Panel Lateral de Agenda & Eventos -->
+      <!-- Panel Lateral de Agenda & Equipo -->
       <aside class="sidebar-agenda-panel">
         <div class="sidebar-header-row">
           <div class="sidebar-title">
-            <span>📋 Agenda de Eventos</span>
+            <span>📋 Resumen de Agenda</span>
           </div>
           <span id="badgeTotalEventos" class="badge-event-counter">0 eventos</span>
+        </div>
+
+        <!-- Filtro Rápido de Miembros del Equipo -->
+        <div class="team-members-shelf">
+          <div class="team-shelf-title">
+            <span>Integrantes Registrados</span>
+            <span id="contadorMiembrosLabel">0 personas</span>
+          </div>
+          <div id="listaChipsMiembros" class="team-chips-list">
+            <!-- Chips de integrantes -->
+          </div>
         </div>
 
         <!-- Pestañas de filtro de agenda -->
@@ -1381,10 +1440,10 @@
         <!-- Lista de Eventos -->
         <div id="listaAgendaScroll" class="agenda-scroll-list"></div>
 
-        <!-- Resumen Rápido -->
-        <div class="sync-info-box">
-          <strong>⚡ Publicación en GitHub Pages:</strong>
-          <p style="margin-top: 4px;">Al compartir el enlace generado con el botón superior, cualquier colega verá exactamente tus 4 meses con los mismos días programados.</p>
+        <!-- Indicador de Tiempo Real -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 9px 12px; font-size: 11px; color: #475569; line-height: 1.45;">
+          <strong>☁️ Sincronización Automática:</strong>
+          <p style="margin-top: 3px;">Cualquier cambio que marques se guarda al instante en Firebase y tus compañeros lo verán en sus pantallas sin recargar.</p>
         </div>
       </aside>
 
@@ -1392,7 +1451,33 @@
 
   </div>
 
-  <!-- MODAL PARA INGRESAR DETALLE DE CAPACITACIÓN -->
+  <!-- MODAL: REGISTRAR O CAMBIAR NOMBRE DE USUARIO -->
+  <div id="modalUsuario" class="modal-backdrop">
+    <div class="modal-card-box">
+      <div class="modal-header-line">
+        <h3><span>👤 Tu Nombre de Integrante</span></h3>
+        <button class="btn-close-modal" onclick="cerrarModalUsuario()">✕</button>
+      </div>
+
+      <div class="modal-body-form">
+        <p style="font-size: 12.5px; color: #64748b;">
+          Escribe tu nombre o apodo. Tu disponibilidad se guardará con este nombre para que el equipo pueda filtrar y ver tu propuesta:
+        </p>
+
+        <div class="form-group">
+          <label for="inputNombreUsuario">Nombre o Apodo:</label>
+          <input type="text" id="inputNombreUsuario" class="form-control-input" placeholder="Ej: Anderson, Carolina, Carlos M..." />
+        </div>
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="btn-modal-cancel" onclick="cerrarModalUsuario()">Cancelar</button>
+        <button class="btn-modal-save" onclick="guardarNombreUsuario()">Guardar y Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PROGRAMAR CAPACITACIÓN -->
   <div id="modalCapacitacion" class="modal-backdrop">
     <div class="modal-card-box">
       <div class="modal-header-line">
@@ -1407,8 +1492,8 @@
         </div>
 
         <div class="form-group">
-          <label for="inputTemaCapacitacion">Nombre o Tema del Taller / Capacitación:</label>
-          <input type="text" id="inputTemaCapacitacion" class="form-control-input" placeholder="Ej: Inducción a Nuevas Políticas, ISO 27001..." />
+          <label for="inputTemaCapacitacion">Tema o Nombre del Taller:</label>
+          <input type="text" id="inputTemaCapacitacion" class="form-control-input" placeholder="Ej: Inducción a Nuevas Políticas, Ciberseguridad..." />
           
           <div class="presets-tags-row">
             <span class="preset-pill" onclick="asignarTemaRapido('Inducción Operativa')">+ Inducción</span>
@@ -1437,14 +1522,38 @@
     <span id="toastMsg">Acción completada</span>
   </div>
 
-  <!-- JAVASCRIPT PRINCIPAL -->
+  <!-- JAVASCRIPT: LÓGICA Y CONEXIÓN REALTIME A FIREBASE -->
   <script>
     /**
      * =========================================================================
-     * MOTOR AUTÓNOMO DE CALENDARIO, FESTIVOS LEY EMILIANI & ESTADOS
+     * INICIALIZACIÓN DE FIREBASE REALTIME DATABASE
      * =========================================================================
      */
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2snuteBpNpsiSo30JMO9o8FXDf8mFuTk",
+      authDomain: "programacion-capacitacion.firebaseapp.com",
+      databaseURL: "https://programacion-capacitacion-default-rtdb.firebaseio.com",
+      projectId: "programacion-capacitacion",
+      storageBucket: "programacion-capacitacion.firebasestorage.app",
+      messagingSenderId: "419891919414",
+      appId: "1:419891919414:web:61cadee7167df66240b697"
+    };
 
+    let fbApp = null;
+    let fbDb = null;
+
+    try {
+      fbApp = firebase.initializeApp(firebaseConfig);
+      fbDb = firebase.database();
+    } catch (err) {
+      console.warn("Advertencia de inicialización Firebase:", err);
+    }
+
+    /**
+     * =========================================================================
+     * ESTADO GLOBAL DE LA APLICACIÓN
+     * =========================================================================
+     */
     const NOMBRES_MESES = [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -1454,42 +1563,33 @@
     const DIAS_SEMANA = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
     const DIAS_COMPLETOS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
-    // 4 Meses del Panorama Solicitado (Septiembre a Diciembre)
+    // 4 Meses Panorama Solicitado
     const MESES_PANORAMA = [8, 9, 10, 11];
 
-    // Estado de la aplicación
     const fechaSistema = new Date();
     let anioActual = 2026;
     let mesActual = 8; // Septiembre por defecto
-    let modoVista = "panorama"; // "panorama" (4 meses) | "mensual" (1 mes)
+    let modoVista = "panorama"; // "panorama" | "mensual"
     let modoMarcado = "habilitado"; // "habilitado" | "bloqueado" | "capacitacion" | "compensatorio" | "limpiar"
     let filtroAgendaActivo = "todos"; // "todos" | "festivos" | "capacitaciones"
 
+    // IDENTIDAD LOCAL Y FILTRO DE EQUIPO
+    let miUsuarioId = localStorage.getItem("cal_mi_usuario_id") || "";
+    let miUsuarioNombre = localStorage.getItem("cal_mi_usuario_nombre") || "";
+    let filtroUsuarioSeleccionado = "todos"; // "todos" | "{usuarioId}"
+
+    // Datos del equipo sincronizados con Firebase: { "{userId}": { nombre: "...", dias: { ... } } }
+    let datosEquipo = {};
+
     let fechaModalPendiente = null;
 
-    // Almacén de fechas: { "AAAA-MM-DD": { estado: string, detalle?: string, horario?: string } }
-    let datosCalendario = {};
-
-    const STORAGE_KEY = "colombia_calendario_operativo_pro_2026";
-
     /* --------------------------------------------------------------------------
-       UTILIDADES DE FECHAS
+       UTILIDADES
        -------------------------------------------------------------------------- */
-    function dosDigitos(n) {
-      return String(n).padStart(2, "0");
-    }
-
-    function formaterClave(y, m, d) {
-      return `${y}-${dosDigitos(m + 1)}-${dosDigitos(d)}`;
-    }
-
-    function parsearClave(clave) {
-      const partes = clave.split("-");
-      return {
-        anio: parseInt(partes[0], 10),
-        mes: parseInt(partes[1], 10) - 1,
-        dia: parseInt(partes[2], 10)
-      };
+    function dosDigitos(n) { return String(n).padStart(2, "0"); }
+    function formaterClave(y, m, d) { return `${y}-${dosDigitos(m + 1)}-${dosDigitos(d)}`; }
+    function normalizarId(nombre) {
+      return nombre.toLowerCase().trim().replace(/[^a-z0-9]/g, "_");
     }
 
     function sumarDias(fecha, dias) {
@@ -1499,25 +1599,20 @@
     }
 
     function trasladarALunes(fecha) {
-      const diaSemana = fecha.getDay(); // 0 = Domingo, 1 = Lunes...
+      const diaSemana = fecha.getDay();
       const delta = diaSemana === 1 ? 0 : (8 - diaSemana) % 7;
       return sumarDias(fecha, delta);
     }
 
     /* --------------------------------------------------------------------------
-       CÁLCULO EXACTO DE FESTIVOS COLOMBIA (LEY 51 DE 1983 - LEY EMILIANI)
+       FESTIVOS OFICIALES DE COLOMBIA (LEY EMILIANI)
        -------------------------------------------------------------------------- */
     function calcularPascua(y) {
-      const a = y % 19;
-      const b = Math.floor(y / 100);
-      const c = y % 100;
-      const d = Math.floor(b / 4);
-      const e = b % 4;
-      const f = Math.floor((b + 8) / 25);
-      const g = Math.floor((b - f + 1) / 3);
+      const a = y % 19, b = Math.floor(y / 100), c = y % 100;
+      const d = Math.floor(b / 4), e = b % 4;
+      const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
       const h = (19 * a + b - d - g + 15) % 30;
-      const i = Math.floor(c / 4);
-      const k = c % 4;
+      const i = Math.floor(c / 4), k = c % 4;
       const l = (32 + 2 * e + 2 * i - h - k) % 7;
       const m = Math.floor((a + 11 * h + 22 * l) / 451);
       const mesPascua = Math.floor((h + l - 7 * m + 114) / 31);
@@ -1557,91 +1652,146 @@
     }
 
     /* --------------------------------------------------------------------------
-       PERSISTENCIA (LOCALSTORAGE + ENLACE COMPARTIBLE HASH)
+       SINCRONIZACIÓN EN TIEMPO REAL CON FIREBASE
        -------------------------------------------------------------------------- */
-    function guardarEnStorage() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(datosCalendario));
-      } catch (e) {
-        console.warn("Storage warning:", e);
-      }
-    }
+    function iniciarEscuchaFirebase() {
+      if (!fbDb) return;
 
-    function cargarDeStorage() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) datosCalendario = JSON.parse(saved);
-      } catch (e) {
-        console.warn("Storage read error:", e);
-      }
-    }
-
-    function cargarDesdeHashURL() {
-      const hash = window.location.hash;
-      if (!hash || !hash.includes("data=")) return false;
-
-      try {
-        const b64 = hash.split("data=")[1];
-        const json = decodeURIComponent(escape(atob(b64)));
-        const data = JSON.parse(json);
-        if (data && typeof data === "object") {
-          datosCalendario = data;
-          guardarEnStorage();
-          mostrarToast("✨ Calendario compartido cargado correctamente", "🔗");
-          return true;
-        }
-      } catch (err) {
-        console.error("Error decodificando hash:", err);
-      }
-      return false;
-    }
-
-    function compartirEnlaceWeb() {
-      try {
-        const json = JSON.stringify(datosCalendario);
-        const b64 = btoa(unescape(encodeURIComponent(json)));
-        const urlFinal = `${window.location.origin}${window.location.pathname}#data=${b64}`;
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(urlFinal).then(() => {
-            mostrarToast("¡Enlace copiado! Pégalo y envíalo a tu equipo", "📋");
-          });
-        } else {
-          const temp = document.createElement("input");
-          temp.value = urlFinal;
-          document.body.appendChild(temp);
-          temp.select();
-          document.execCommand("copy");
-          temp.remove();
-          mostrarToast("¡Enlace copiado al portapapeles!", "📋");
-        }
-
-        window.location.hash = `data=${b64}`;
-      } catch (err) {
-        alert("Error generando enlace: " + err.message);
-      }
-    }
-
-    function reiniciarMarcaciones() {
-      if (confirm("¿Estás seguro de que deseas limpiar todas las programaciones marcadas?")) {
-        datosCalendario = {};
-        guardarEnStorage();
-        if (window.location.hash.includes("data=")) {
-          history.replaceState(null, null, window.location.pathname);
-        }
+      fbDb.ref("equipo").on("value", snapshot => {
+        const val = snapshot.val() || {};
+        datosEquipo = val;
+        actualizarSelectoresDeUsuarios();
         renderizarTodo();
-        mostrarToast("Calendario reiniciado a estado limpio", "🧹");
+      }, err => {
+        console.warn("Error leyendo Firebase:", err);
+      });
+    }
+
+    function guardarCambioEnFirebase(userId, fechaClave, datosDia) {
+      if (!fbDb || !userId) return;
+
+      if (datosDia === null) {
+        fbDb.ref(`equipo/${userId}/dias/${fechaClave}`).remove();
+      } else {
+        fbDb.ref(`equipo/${userId}/dias/${fechaClave}`).set(datosDia);
+      }
+      fbDb.ref(`equipo/${userId}/ultimaModificacion`).set(Date.now());
+    }
+
+    /* --------------------------------------------------------------------------
+       GESTIÓN DE IDENTIDAD DEL USUARIO LOCAL
+       -------------------------------------------------------------------------- */
+    function verificarIdentidadInicial() {
+      if (!miUsuarioId || !miUsuarioNombre) {
+        setTimeout(abrirModalCambiarMiNombre, 600);
+      } else {
+        actualizarEtiquetaMiNombre();
       }
     }
 
-    function mostrarToast(mensaje, icono = "✨") {
-      const toast = document.getElementById("toastPopup");
-      document.getElementById("toastMsg").textContent = mensaje;
-      document.getElementById("toastIcon").textContent = icono;
-      toast.classList.add("visible");
-      setTimeout(() => {
-        toast.classList.remove("visible");
-      }, 3500);
+    function actualizarEtiquetaMiNombre() {
+      document.getElementById("labelMiNombreActivo").textContent = miUsuarioNombre || "Sin asignar";
+    }
+
+    function abrirModalCambiarMiNombre() {
+      document.getElementById("inputNombreUsuario").value = miUsuarioNombre || "";
+      document.getElementById("modalUsuario").classList.add("open");
+      setTimeout(() => document.getElementById("inputNombreUsuario").focus(), 150);
+    }
+
+    function abrirModalNuevoUsuario() {
+      document.getElementById("inputNombreUsuario").value = "";
+      document.getElementById("modalUsuario").classList.add("open");
+      setTimeout(() => document.getElementById("inputNombreUsuario").focus(), 150);
+    }
+
+    function cerrarModalUsuario() {
+      document.getElementById("modalUsuario").classList.remove("open");
+    }
+
+    function guardarNombreUsuario() {
+      const nombreIngresado = document.getElementById("inputNombreUsuario").value.trim();
+      if (!nombreIngresado) {
+        alert("Por favor escribe tu nombre o apodo");
+        return;
+      }
+
+      const uid = normalizarId(nombreIngresado);
+      miUsuarioId = uid;
+      miUsuarioNombre = nombreIngresado;
+
+      localStorage.setItem("cal_mi_usuario_id", miUsuarioId);
+      localStorage.setItem("cal_mi_usuario_nombre", miUsuarioNombre);
+
+      actualizarEtiquetaMiNombre();
+
+      // Registrar usuario en Firebase si no existe
+      if (fbDb) {
+        fbDb.ref(`equipo/${uid}/nombre`).set(nombreIngresado);
+      } else {
+        if (!datosEquipo[uid]) {
+          datosEquipo[uid] = { nombre: nombreIngresado, dias: {} };
+        }
+      }
+
+      // Cambiar filtro automáticamente a este usuario
+      filtroUsuarioSeleccionado = uid;
+
+      cerrarModalUsuario();
+      actualizarSelectoresDeUsuarios();
+      renderizarTodo();
+      mostrarToast(`¡Bienvenido ${nombreIngresado}! Ahora estás marcando tu propuesta.`, "👋");
+    }
+
+    function actualizarSelectoresDeUsuarios() {
+      const select = document.getElementById("selectFiltroUsuario");
+      const chipsContainer = document.getElementById("listaChipsMiembros");
+      const uids = Object.keys(datosEquipo);
+
+      // 1. Selector de cabecera
+      select.innerHTML = `<option value="todos">👥 Consolidado del Equipo (Todos)</option>`;
+
+      uids.forEach(uid => {
+        const u = datosEquipo[uid];
+        const opt = document.createElement("option");
+        opt.value = uid;
+        opt.textContent = `${u.nombre || uid} ${uid === miUsuarioId ? '(Tú)' : ''}`;
+        if (uid === filtroUsuarioSeleccionado) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      // 2. Chips en barra lateral
+      chipsContainer.innerHTML = "";
+      document.getElementById("contadorMiembrosLabel").textContent = `${uids.length} personas`;
+
+      // Chip 'Todos'
+      const chipTodos = document.createElement("div");
+      chipTodos.className = "member-mini-chip" + (filtroUsuarioSeleccionado === "todos" ? " active-member" : "");
+      chipTodos.textContent = "👥 Todos";
+      chipTodos.onclick = () => fijarFiltroUsuario("todos");
+      chipsContainer.appendChild(chipTodos);
+
+      uids.forEach(uid => {
+        const u = datosEquipo[uid];
+        const chip = document.createElement("div");
+        chip.className = "member-mini-chip" + (filtroUsuarioSeleccionado === uid ? " active-member" : "");
+        chip.textContent = u.nombre || uid;
+        chip.onclick = () => fijarFiltroUsuario(uid);
+        chipsContainer.appendChild(chip);
+      });
+    }
+
+    function manejarCambioFiltroUsuario() {
+      filtroUsuarioSeleccionado = document.getElementById("selectFiltroUsuario").value;
+      actualizarSelectoresDeUsuarios();
+      renderizarTodo();
+    }
+
+    function fijarFiltroUsuario(uid) {
+      filtroUsuarioSeleccionado = uid;
+      document.getElementById("selectFiltroUsuario").value = uid;
+      actualizarSelectoresDeUsuarios();
+      renderizarTodo();
     }
 
     /* --------------------------------------------------------------------------
@@ -1661,10 +1811,7 @@
       modoVista = tipo;
       document.getElementById("tabVistaPanorama").classList.toggle("active", tipo === "panorama");
       document.getElementById("tabVistaMensual").classList.toggle("active", tipo === "mensual");
-
-      const selectMes = document.getElementById("selectMes");
-      selectMes.style.display = tipo === "mensual" ? "inline-block" : "none";
-
+      document.getElementById("selectMes").style.display = tipo === "mensual" ? "inline-block" : "none";
       renderizarTodo();
     }
 
@@ -1673,18 +1820,13 @@
         anioActual += delta;
       } else {
         mesActual += delta;
-        if (mesActual < 0) {
-          mesActual = 11;
-          anioActual -= 1;
-        } else if (mesActual > 11) {
-          mesActual = 0;
-          anioActual += 1;
-        }
+        if (mesActual < 0) { mesActual = 11; anioActual -= 1; }
+        else if (mesActual > 11) { mesActual = 0; anioActual += 1; }
       }
       renderizarTodo();
     }
 
-    function sincronizarSelectores() {
+    function sincronizarSelectoresFecha() {
       const selectMes = document.getElementById("selectMes");
       const selectAnio = document.getElementById("selectAnio");
 
@@ -1714,7 +1856,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       CONSTRUCCIÓN DE TARJETAS DE MES (ESTRICTA SIMETRÍA Y PROTECCIÓN CSS)
+       CONSTRUCCIÓN DE CADA TARJETA DE MES (SIMETRÍA MATEMÁTICA Y SIN DESFASE)
        -------------------------------------------------------------------------- */
     function construirTarjetaMes(y, m, esModoPanorama) {
       const card = document.createElement("div");
@@ -1727,12 +1869,9 @@
       // Contar días hábiles en este mes
       let habilesMes = 0;
       for (let d = 1; d <= totalDias; d++) {
-        const f = new Date(y, m, d);
-        const ds = f.getDay();
+        const ds = new Date(y, m, d).getDay();
         const k = formaterClave(y, m, d);
-        if (ds !== 0 && ds !== 6 && !festivos[k]) {
-          habilesMes++;
-        }
+        if (ds !== 0 && ds !== 6 && !festivos[k]) habilesMes++;
       }
 
       // 1. Encabezado del mes
@@ -1747,7 +1886,7 @@
       `;
       card.appendChild(header);
 
-      // 2. Fila de nombres de día (Lun a Dom)
+      // 2. Fila de nombres de día (Lun a Dom - 7 columnas matemáticamente bloqueadas)
       const weekdaysRow = document.createElement("div");
       weekdaysRow.className = "weekdays-header-row";
       DIAS_SEMANA.forEach((dia, idx) => {
@@ -1758,11 +1897,10 @@
       });
       card.appendChild(weekdaysRow);
 
-      // 3. Grilla de celdas de días
+      // 3. Grilla de celdas
       const daysGrid = document.createElement("div");
       daysGrid.className = "month-days-grid";
 
-      // Desplazamiento inicial (Lunes = 0, ..., Domingo = 6)
       const primerDiaObj = new Date(y, m, 1);
       const offsetInicio = (primerDiaObj.getDay() + 6) % 7;
 
@@ -1776,12 +1914,9 @@
       for (let dia = 1; dia <= totalDias; dia++) {
         const k = formaterClave(y, m, dia);
         const fechaDia = new Date(y, m, dia);
-        const diaSemanaNum = fechaDia.getDay();
-        const esFinSemana = (diaSemanaNum === 0 || diaSemanaNum === 6);
+        const ds = fechaDia.getDay();
+        const esFinSemana = (ds === 0 || ds === 6);
         const nombreFestivo = festivos[k] || null;
-
-        const info = datosCalendario[k] || null;
-        const estado = info ? info.estado : null;
 
         const cell = document.createElement("div");
         cell.className = "day-cell";
@@ -1790,13 +1925,6 @@
         if (esFinSemana) cell.classList.add("is-weekend");
         if (nombreFestivo) cell.classList.add("is-holiday");
 
-        // Clases de estado
-        if (estado === "habilitado") cell.classList.add("status-hab");
-        if (estado === "bloqueado") cell.classList.add("status-bloq");
-        if (estado === "capacitacion") cell.classList.add("status-cap");
-        if (estado === "compensatorio") cell.classList.add("status-comp");
-
-        // HTML superior: Número de día
         let topHTML = `
           <div class="day-cell-top">
             <span class="day-number">${dia}</span>
@@ -1804,9 +1932,9 @@
           </div>
         `;
 
-        // HTML inferior: Micro-etiquetas (protegidas con ellipsis contra deformación)
         let badgesHTML = '<div class="day-badges-stack">';
 
+        // Badge Festivo Oficial
         if (nombreFestivo) {
           badgesHTML += `
             <div class="festivo-mini-badge" title="Festivo Oficial: ${nombreFestivo}">
@@ -1816,42 +1944,68 @@
           `;
         }
 
-        if (estado === "habilitado") {
-          badgesHTML += `
-            <div class="status-mini-pill" title="Día Habilitado">
-              <span class="status-glow"></span>
-              <span class="status-text">Habilitado</span>
-            </div>
-          `;
-        } else if (estado === "bloqueado") {
-          badgesHTML += `
-            <div class="status-mini-pill" title="Día Bloqueado">
-              <span class="status-glow"></span>
-              <span class="status-text">Bloqueado</span>
-            </div>
-          `;
-        } else if (estado === "compensatorio") {
-          badgesHTML += `
-            <div class="status-mini-pill" title="Día Compensatorio">
-              <span class="status-glow"></span>
-              <span class="status-text">Compensatorio</span>
-            </div>
-          `;
-        } else if (estado === "capacitacion") {
-          const tema = (info && info.detalle) ? info.detalle : "Capacitación";
-          badgesHTML += `
-            <div class="status-mini-pill" title="Capacitación: ${tema}">
-              <span class="status-glow"></span>
-              <span class="status-text">${tema}</span>
-            </div>
-          `;
+        // Caso A: Vista Consolidada de Todo el Equipo
+        if (filtroUsuarioSeleccionado === "todos") {
+          let habCount = 0;
+          let bloqCount = 0;
+          let capCount = 0;
+          const nombresHab = [];
+          const nombresBloq = [];
+          const nombresCap = [];
+
+          Object.keys(datosEquipo).forEach(uid => {
+            const u = datosEquipo[uid];
+            if (u.dias && u.dias[k]) {
+              const st = u.dias[k].estado;
+              if (st === "habilitado") { habCount++; nombresHab.push(u.nombre || uid); }
+              if (st === "bloqueado") { bloqCount++; nombresBloq.push(u.nombre || uid); }
+              if (st === "capacitacion") { capCount++; nombresCap.push(`${u.nombre || uid} (${u.dias[k].detalle || 'Cap.'})`); }
+            }
+          });
+
+          if (habCount > 0 || bloqCount > 0 || capCount > 0) {
+            let tooltipTeam = `Día ${dia} de ${NOMBRES_MESES[m]}:\n`;
+            if (nombresHab.length) tooltipTeam += `🟢 Habilitados (${habCount}): ${nombresHab.join(', ')}\n`;
+            if (nombresBloq.length) tooltipTeam += `🔴 Bloqueados (${bloqCount}): ${nombresBloq.join(', ')}\n`;
+            if (nombresCap.length) tooltipTeam += `🟣 Capacitación (${capCount}): ${nombresCap.join(', ')}\n`;
+
+            badgesHTML += `
+              <div class="team-consolidated-pill" title="${tooltipTeam}">
+                ${habCount > 0 ? `<span style="color:#10b981">🟢${habCount}</span>` : ''}
+                ${bloqCount > 0 ? `<span style="color:#f43f5e">🔴${bloqCount}</span>` : ''}
+                ${capCount > 0 ? `<span style="color:#8b5cf6">🟣${capCount}</span>` : ''}
+              </div>
+            `;
+          }
+        } 
+        // Caso B: Vista Individual Filtrada por Integrante
+        else {
+          const userObj = datosEquipo[filtroUsuarioSeleccionado] || null;
+          const info = (userObj && userObj.dias) ? userObj.dias[k] : null;
+
+          if (info) {
+            const estado = info.estado;
+            if (estado === "habilitado") {
+              cell.classList.add("status-hab");
+              badgesHTML += `<div class="status-mini-pill" title="Habilitado"><span class="status-glow"></span><span class="status-text">Habilitado</span></div>`;
+            } else if (estado === "bloqueado") {
+              cell.classList.add("status-bloq");
+              badgesHTML += `<div class="status-mini-pill" title="Bloqueado"><span class="status-glow"></span><span class="status-text">Bloqueado</span></div>`;
+            } else if (estado === "compensatorio") {
+              cell.classList.add("status-comp");
+              badgesHTML += `<div class="status-mini-pill" title="Compensatorio"><span class="status-glow"></span><span class="status-text">Compensatorio</span></div>`;
+            } else if (estado === "capacitacion") {
+              cell.classList.add("status-cap");
+              const tema = info.detalle || "Capacitación";
+              badgesHTML += `<div class="status-mini-pill" title="Capacitación: ${tema}"><span class="status-glow"></span><span class="status-text">${tema}</span></div>`;
+            }
+          }
         }
 
         badgesHTML += '</div>';
-
         cell.innerHTML = topHTML + badgesHTML;
 
-        // Clic para alternar / marcar
+        // Clic para marcar día
         cell.onclick = () => {
           manejarClicCelda(k, dia, m, y);
         };
@@ -1864,12 +2018,14 @@
     }
 
     /* --------------------------------------------------------------------------
-       INTERACCIÓN DE CLIC EN DÍAS
+       ACCIONES DE CLIC EN DÍAS (MARCAR DISPONIBILIDAD)
        -------------------------------------------------------------------------- */
     function manejarClicCelda(clave, dia, m, y) {
-      if (modoMarcado === "limpiar") {
-        delete datosCalendario[clave];
-        renderizarTodo();
+      // Determinar qué usuario se está modificando
+      let usuarioDestino = filtroUsuarioSeleccionado !== "todos" ? filtroUsuarioSeleccionado : miUsuarioId;
+
+      if (!usuarioDestino) {
+        abrirModalCambiarMiNombre();
         return;
       }
 
@@ -1878,9 +2034,22 @@
         return;
       }
 
-      datosCalendario[clave] = {
-        estado: modoMarcado
-      };
+      let nuevoEstado = modoMarcado === "limpiar" ? null : { estado: modoMarcado };
+
+      // Actualizar en memoria local
+      if (!datosEquipo[usuarioDestino]) {
+        datosEquipo[usuarioDestino] = { nombre: miUsuarioNombre || usuarioDestino, dias: {} };
+      }
+      if (!datosEquipo[usuarioDestino].dias) datosEquipo[usuarioDestino].dias = {};
+
+      if (nuevoEstado === null) {
+        delete datosEquipo[usuarioDestino].dias[clave];
+      } else {
+        datosEquipo[usuarioDestino].dias[clave] = nuevoEstado;
+      }
+
+      // Guardar en Firebase en tiempo real
+      guardarCambioEnFirebase(usuarioDestino, clave, nuevoEstado);
 
       renderizarTodo();
     }
@@ -1889,8 +2058,16 @@
        MODAL DE CAPACITACIÓN
        -------------------------------------------------------------------------- */
     function abrirModalCapacitacion(clave, dia, m, y) {
+      let usuarioDestino = filtroUsuarioSeleccionado !== "todos" ? filtroUsuarioSeleccionado : miUsuarioId;
+      if (!usuarioDestino) {
+        abrirModalCambiarMiNombre();
+        return;
+      }
+
       fechaModalPendiente = clave;
-      const actual = datosCalendario[clave] || {};
+      const u = datosEquipo[usuarioDestino] || {};
+      const actual = (u.dias && u.dias[clave]) ? u.dias[clave] : {};
+
       document.getElementById("modalFechaTexto").textContent = `${dia} de ${NOMBRES_MESES[m]} de ${y}`;
       document.getElementById("inputTemaCapacitacion").value = actual.detalle || "";
       document.getElementById("inputHorarioCapacitacion").value = actual.horario || "";
@@ -1910,29 +2087,50 @@
 
     function guardarCapacitacionModal() {
       if (!fechaModalPendiente) return;
+      let usuarioDestino = filtroUsuarioSeleccionado !== "todos" ? filtroUsuarioSeleccionado : miUsuarioId;
 
       const tema = document.getElementById("inputTemaCapacitacion").value.trim() || "Capacitación";
       const horario = document.getElementById("inputHorarioCapacitacion").value.trim() || "";
 
-      datosCalendario[fechaModalPendiente] = {
+      const infoCap = {
         estado: "capacitacion",
         detalle: tema,
         horario: horario
       };
 
+      if (!datosEquipo[usuarioDestino]) datosEquipo[usuarioDestino] = { nombre: miUsuarioNombre || usuarioDestino, dias: {} };
+      if (!datosEquipo[usuarioDestino].dias) datosEquipo[usuarioDestino].dias = {};
+
+      datosEquipo[usuarioDestino].dias[fechaModalPendiente] = infoCap;
+
+      guardarCambioEnFirebase(usuarioDestino, fechaModalPendiente, infoCap);
+
       cerrarModalCapacitacion();
       renderizarTodo();
-      mostrarToast(`Capacitación asignada: "${tema}"`, "🟣");
+      mostrarToast(`Capacitación programada: "${tema}"`, "🟣");
+    }
+
+    function reiniciarMarcaciones() {
+      let usuarioDestino = filtroUsuarioSeleccionado !== "todos" ? filtroUsuarioSeleccionado : miUsuarioId;
+      if (!usuarioDestino) return;
+
+      const nombreAfectado = (datosEquipo[usuarioDestino] && datosEquipo[usuarioDestino].nombre) || usuarioDestino;
+
+      if (confirm(`¿Deseas limpiar todos los días marcados de ${nombreAfectado}?`)) {
+        if (datosEquipo[usuarioDestino]) datosEquipo[usuarioDestino].dias = {};
+        if (fbDb) fbDb.ref(`equipo/${usuarioDestino}/dias`).remove();
+        renderizarTodo();
+        mostrarToast(`Días de ${nombreAfectado} restablecidos`, "🧹");
+      }
     }
 
     /* --------------------------------------------------------------------------
-       RENDERIZADO GLOBAL DE VISTAS Y MÉTRICAS
+       RENDERIZADO GLOBAL & AGENDA
        -------------------------------------------------------------------------- */
     function renderizarTodo() {
-      sincronizarSelectores();
+      sincronizarSelectoresFecha();
       renderizarSuperficie();
       actualizarMetricasYAgenda();
-      guardarEnStorage();
     }
 
     function renderizarSuperficie() {
@@ -1944,11 +2142,9 @@
       } else {
         const quadGrid = document.createElement("div");
         quadGrid.className = "panorama-quad-grid";
-
         MESES_PANORAMA.forEach(m => {
           quadGrid.appendChild(construirTarjetaMes(anioActual, m, true));
         });
-
         container.appendChild(quadGrid);
       }
     }
@@ -1961,121 +2157,108 @@
       actualizarMetricasYAgenda();
     }
 
-    function eliminarRegistroAgenda(clave) {
-      delete datosCalendario[clave];
+    function eliminarRegistroAgenda(userId, clave) {
+      if (datosEquipo[userId] && datosEquipo[userId].dias) {
+        delete datosEquipo[userId].dias[clave];
+      }
+      guardarCambioEnFirebase(userId, clave, null);
       renderizarTodo();
-      mostrarToast("Elemento eliminado de la agenda", "🗑️");
+      mostrarToast("Registro eliminado de la agenda", "🗑️");
     }
 
     function actualizarMetricasYAgenda() {
       const festivos = obtenerFestivosColombia(anioActual);
-
-      // Calcular rango visible
       const mesesVisibles = modoVista === "panorama" ? MESES_PANORAMA : [mesActual];
 
-      let countHab = 0;
-      let countBloq = 0;
-      let countCap = 0;
-      let countComp = 0;
-      let countFest = 0;
-
+      let countHab = 0, countBloq = 0, countCap = 0, countFest = 0;
       const eventosLista = [];
 
-      // Recorrer meses visibles
+      // Recopilar festivos en el periodo
       mesesVisibles.forEach(m => {
         const totalDias = new Date(anioActual, m + 1, 0).getDate();
         for (let d = 1; d <= totalDias; d++) {
           const k = formaterClave(anioActual, m, d);
-          const fechaObj = new Date(anioActual, m, d);
-          const esFestivo = festivos[k] || null;
-          const info = datosCalendario[k] || null;
+          const fObj = new Date(anioActual, m, d);
+          const esFest = festivos[k] || null;
 
-          if (esFestivo) countFest++;
-
-          if (info) {
-            if (info.estado === "habilitado") countHab++;
-            if (info.estado === "bloqueado") countBloq++;
-            if (info.estado === "capacitacion") countCap++;
-            if (info.estado === "compensatorio") countComp++;
-          }
-
-          // Armar eventos para la agenda
-          if (esFestivo) {
+          if (esFest) {
+            countFest++;
             eventosLista.push({
               clave: k,
-              fecha: fechaObj,
+              fecha: fObj,
               tipo: "festivo",
-              titulo: esFestivo,
+              titulo: esFest,
               subtitulo: "Festivo Oficial (Ley Emiliani)",
               esEditable: false
-            });
-          }
-
-          if (info) {
-            let titulo = "";
-            let subtitulo = "";
-            let tipo = info.estado;
-
-            if (info.estado === "habilitado") {
-              titulo = "Día Habilitado";
-              subtitulo = "Disponibilidad confirmada";
-            } else if (info.estado === "bloqueado") {
-              titulo = "Día Bloqueado";
-              subtitulo = "No disponible / Cierre";
-            } else if (info.estado === "compensatorio") {
-              titulo = "Día Compensatorio";
-              subtitulo = "Descanso legal compensado";
-            } else if (info.estado === "capacitacion") {
-              titulo = info.detalle || "Capacitación";
-              subtitulo = info.horario ? `Horario: ${info.horario}` : "Jornada formativa programada";
-            }
-
-            eventosLista.push({
-              clave: k,
-              fecha: fechaObj,
-              tipo: tipo,
-              titulo: titulo,
-              subtitulo: subtitulo,
-              esEditable: true
             });
           }
         }
       });
 
-      // Actualizar contadores en la barra
+      // Recopilar registros de usuarios según el filtro activo
+      const usuariosAComputar = filtroUsuarioSeleccionado === "todos" 
+        ? Object.keys(datosEquipo) 
+        : [filtroUsuarioSeleccionado];
+
+      usuariosAComputar.forEach(uid => {
+        const u = datosEquipo[uid];
+        if (!u || !u.dias) return;
+
+        mesesVisibles.forEach(m => {
+          const totalDias = new Date(anioActual, m + 1, 0).getDate();
+          for (let d = 1; d <= totalDias; d++) {
+            const k = formaterClave(anioActual, m, d);
+            const info = u.dias[k] || null;
+            if (info) {
+              if (info.estado === "habilitado") countHab++;
+              if (info.estado === "bloqueado") countBloq++;
+              if (info.estado === "capacitacion") countCap++;
+
+              let subtitulo = `Integrante: ${u.nombre || uid}`;
+              if (info.horario) subtitulo += ` • ${info.horario}`;
+
+              eventosLista.push({
+                clave: k,
+                userId: uid,
+                fecha: new Date(anioActual, m, d),
+                tipo: info.estado,
+                titulo: info.estado === "capacitacion" ? (info.detalle || "Capacitación") : `Día ${info.estado.toUpperCase()}`,
+                subtitulo: subtitulo,
+                esEditable: true
+              });
+            }
+          }
+        });
+      });
+
+      // Actualizar contadores del dock
       document.getElementById("kpiHabilitados").textContent = countHab;
       document.getElementById("kpiBloqueados").textContent = countBloq;
       document.getElementById("kpiCapacitaciones").textContent = countCap;
       document.getElementById("kpiFestivos").textContent = countFest;
 
-      // Ordenar eventos cronológicamente
       eventosLista.sort((a, b) => a.fecha - b.fecha);
 
-      // Filtrar según pestaña
-      let eventosFiltrados = eventosLista;
-      if (filtroAgendaActivo === "festivos") {
-        eventosFiltrados = eventosLista.filter(e => e.tipo === "festivo");
-      } else if (filtroAgendaActivo === "capacitaciones") {
-        eventosFiltrados = eventosLista.filter(e => e.tipo === "capacitacion");
-      }
+      let filtrados = eventosLista;
+      if (filtroAgendaActivo === "festivos") filtrados = eventosLista.filter(e => e.tipo === "festivo");
+      if (filtroAgendaActivo === "capacitaciones") filtrados = eventosLista.filter(e => e.tipo === "capacitacion");
 
-      document.getElementById("badgeTotalEventos").textContent = `${eventosFiltrados.length} items`;
+      document.getElementById("badgeTotalEventos").textContent = `${filtrados.length} items`;
 
-      // Renderizar items de la agenda
       const scrollContainer = document.getElementById("listaAgendaScroll");
       scrollContainer.innerHTML = "";
 
-      if (eventosFiltrados.length === 0) {
+      if (filtrados.length === 0) {
         scrollContainer.innerHTML = `
-          <div style="text-align: center; padding: 24px 10px; color: #94a3b8; font-size: 12px;">
-            <div style="font-size: 24px; margin-bottom: 6px;">🍃</div>
-            No hay eventos registrados en este filtro.
+          <div style="text-align: center; padding: 20px 10px; color: #94a3b8; font-size: 12px;">
+            <div style="font-size: 20px; margin-bottom: 4px;">🍃</div>
+            No hay eventos en este filtro.
           </div>
         `;
         return;
       }
 
-      eventosFiltrados.forEach(item => {
+      filtrados.forEach(item => {
         const card = document.createElement("div");
         card.className = "event-card-item";
 
@@ -2083,12 +2266,12 @@
         const mesAbr = ABREV_MESES[item.fecha.getMonth()];
         const diaNombre = DIAS_COMPLETOS[item.fecha.getDay()];
 
-        let badgeTipoHTML = "";
-        if (item.tipo === "festivo") badgeTipoHTML = '<span class="event-badge-pill event-badge-festivo">🇨🇴 Festivo</span>';
-        else if (item.tipo === "capacitacion") badgeTipoHTML = '<span class="event-badge-pill event-badge-cap">🟣 Capacitación</span>';
-        else if (item.tipo === "habilitado") badgeTipoHTML = '<span class="event-badge-pill event-badge-hab">🟢 Habilitado</span>';
-        else if (item.tipo === "bloqueado") badgeTipoHTML = '<span class="event-badge-pill event-badge-bloq">🔴 Bloqueado</span>';
-        else if (item.tipo === "compensatorio") badgeTipoHTML = '<span class="event-badge-pill event-badge-comp">🟠 Compensatorio</span>';
+        let badgeHTML = "";
+        if (item.tipo === "festivo") badgeHTML = '<span class="event-badge-pill event-badge-festivo">🇨🇴 Festivo</span>';
+        else if (item.tipo === "capacitacion") badgeHTML = '<span class="event-badge-pill event-badge-cap">🟣 Capacitación</span>';
+        else if (item.tipo === "habilitado") badgeHTML = '<span class="event-badge-pill event-badge-hab">🟢 Habilitado</span>';
+        else if (item.tipo === "bloqueado") badgeHTML = '<span class="event-badge-pill event-badge-bloq">🔴 Bloqueado</span>';
+        else if (item.tipo === "compensatorio") badgeHTML = '<span class="event-badge-pill event-badge-comp">🟠 Compensatorio</span>';
 
         card.innerHTML = `
           <div class="event-date-box">
@@ -2098,13 +2281,13 @@
           <div class="event-info-col">
             <div class="event-title-line" title="${item.titulo}">${item.titulo}</div>
             <div class="event-desc-line">
-              ${badgeTipoHTML}
+              ${badgeHTML}
               <span>• ${diaNombre}</span>
             </div>
-            ${item.subtitulo ? `<div style="font-size: 10px; color: #64748b; margin-top: 2px;">${item.subtitulo}</div>` : ''}
+            ${item.subtitulo ? `<div style="font-size: 9.5px; color: #64748b; margin-top: 2px;">${item.subtitulo}</div>` : ''}
           </div>
           ${item.esEditable ? `
-            <button class="btn-delete-event" onclick="eliminarRegistroAgenda('${item.clave}')" title="Quitar programación">✕</button>
+            <button class="btn-delete-event" onclick="eliminarRegistroAgenda('${item.userId}', '${item.clave}')" title="Quitar este día">✕</button>
           ` : ''}
         `;
 
@@ -2113,108 +2296,101 @@
     }
 
     /* --------------------------------------------------------------------------
-       EXPORTACIÓN A EXCEL MULTI-HOJA CON SHEETJS
+       EXPORTACIÓN A EXCEL MULTI-INTEGRANTE
        -------------------------------------------------------------------------- */
     function exportarAExcel() {
       if (typeof XLSX === "undefined") {
-        alert("La librería de exportación a Excel se está cargando. Intenta de nuevo en 3 segundos.");
+        alert("Cargando librería Excel, por favor intenta en unos segundos.");
         return;
       }
 
       const festivos = obtenerFestivosColombia(anioActual);
       const mesesAExportar = modoVista === "panorama" ? MESES_PANORAMA : [mesActual];
+      const uids = Object.keys(datosEquipo);
 
-      // Hoja 1: Detalle día por día
-      const filasDetalle = [
-        ["FECHA", "AÑO", "MES", "DÍA", "DÍA SEMANA", "ESTADO OPERATIVO", "DETALLE / CAPACITACIÓN", "FESTIVO OFICIAL"]
-      ];
+      // Hoja 1: Matriz Comparativa del Equipo
+      const encabezadosMatriz = ["FECHA", "MES", "DÍA", "FESTIVO OFICIAL"];
+      uids.forEach(uid => encabezadosMatriz.push((datosEquipo[uid].nombre || uid).toUpperCase()));
 
-      // Hoja 2: Resumen Cuatrimestral
-      const filasResumen = [
-        ["RESUMEN OPERATIVO - CALENDARIO COLOMBIA", `${anioActual}`],
-        ["Generado el:", new Date().toLocaleString()],
-        [],
-        ["MES", "DÍAS HÁBILES REALES", "HABILITADOS", "BLOQUEADOS", "CAPACITACIONES", "COMPENSATORIOS", "FESTIVOS"]
-      ];
+      const filasMatriz = [encabezadosMatriz];
 
       mesesAExportar.forEach(m => {
         const totalDias = new Date(anioActual, m + 1, 0).getDate();
-        let habilesMes = 0;
-        let habs = 0, bloqs = 0, caps = 0, comps = 0, fests = 0;
-
         for (let d = 1; d <= totalDias; d++) {
           const k = formaterClave(anioActual, m, d);
-          const fObj = new Date(anioActual, m, d);
-          const ds = fObj.getDay();
-          const esF = festivos[k] || "";
-          const info = datosCalendario[k] || null;
+          const fFest = festivos[k] || "";
 
-          if (ds !== 0 && ds !== 6 && !esF) habilesMes++;
-          if (esF) fests++;
+          const fila = [k, NOMBRES_MESES[m], d, fFest];
 
-          let estadoTexto = "Normal / Hábil";
-          let detalleTexto = "";
-
-          if (info) {
-            if (info.estado === "habilitado") { estadoTexto = "Habilitado"; habs++; }
-            if (info.estado === "bloqueado") { estadoTexto = "Bloqueado"; bloqs++; }
-            if (info.estado === "compensatorio") { estadoTexto = "Compensatorio"; comps++; }
-            if (info.estado === "capacitacion") {
-              estadoTexto = "Capacitación";
-              detalleTexto = info.detalle || "Capacitación";
-              if (info.horario) detalleTexto += ` (${info.horario})`;
-              caps++;
+          uids.forEach(uid => {
+            const u = datosEquipo[uid];
+            let estado = "Normal";
+            if (u.dias && u.dias[k]) {
+              estado = u.dias[k].estado;
+              if (u.dias[k].detalle) estado += ` (${u.dias[k].detalle})`;
             }
-          }
+            fila.push(estado);
+          });
 
-          filasDetalle.push([
-            k,
-            anioActual,
-            NOMBRES_MESES[m],
-            d,
-            DIAS_COMPLETOS[ds],
-            estadoTexto,
-            detalleTexto,
-            esF
-          ]);
+          filasMatriz.push(fila);
         }
+      });
 
-        filasResumen.push([
-          NOMBRES_MESES[m],
-          habilesMes,
-          habs,
-          bloqs,
-          caps,
-          comps,
-          fests
-        ]);
+      // Hoja 2: Resumen por Integrante
+      const filasResumen = [
+        ["RESUMEN DE DISPONIBILIDAD - EQUIPO", `${anioActual}`],
+        ["Fecha del reporte:", new Date().toLocaleString()],
+        [],
+        ["INTEGRANTE", "DÍAS HABILITADOS", "BLOQUEADOS", "CAPACITACIONES", "COMPENSATORIOS"]
+      ];
+
+      uids.forEach(uid => {
+        const u = datosEquipo[uid];
+        let h = 0, b = 0, c = 0, comp = 0;
+        if (u.dias) {
+          Object.values(u.dias).forEach(item => {
+            if (item.estado === "habilitado") h++;
+            if (item.estado === "bloqueado") b++;
+            if (item.estado === "capacitacion") c++;
+            if (item.estado === "compensatorio") comp++;
+          });
+        }
+        filasResumen.push([u.nombre || uid, h, b, c, comp]);
       });
 
       const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasMatriz), "Matriz Comparativa Equipo");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasResumen), "Resumen por Integrante");
 
-      const wsResumen = XLSX.utils.aoa_to_sheet(filasResumen);
-      XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen Operativo");
+      XLSX.writeFile(wb, `Disponibilidad_Equipo_Colombia_${anioActual}.xlsx`);
+      mostrarToast("Reporte de equipo descargado en Excel", "📊");
+    }
 
-      const wsDetalle = XLSX.utils.aoa_to_sheet(filasDetalle);
-      XLSX.utils.book_append_sheet(wb, wsDetalle, "Programación de Días");
+    function compartirEnlaceWeb() {
+      const url = window.location.href.split("#")[0];
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          mostrarToast("¡Enlace copiado! Envíalo a tus compañeros para que entren y marquen", "🔗");
+        });
+      } else {
+        alert("Enlace: " + url);
+      }
+    }
 
-      const nombreArchivo = `Calendario_Operativo_Colombia_${anioActual}_${modoVista}.xlsx`;
-      XLSX.writeFile(wb, nombreArchivo);
-
-      mostrarToast("Archivo Excel descargado exitosamente", "📊");
+    function mostrarToast(msg, icon = "✨") {
+      const toast = document.getElementById("toastPopup");
+      document.getElementById("toastMsg").textContent = msg;
+      document.getElementById("toastIcon").textContent = icon;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 3800);
     }
 
     /* --------------------------------------------------------------------------
-       INICIALIZACIÓN AL CARGAR LA PÁGINA
+       ARRANQUE
        -------------------------------------------------------------------------- */
     window.addEventListener("DOMContentLoaded", () => {
-      cargarDeStorage();
-      cargarDesdeHashURL();
-      renderizarTodo();
-    });
-
-    window.addEventListener("hashchange", () => {
-      cargarDesdeHashURL();
+      iniciarEscuchaFirebase();
+      verificarIdentidadInicial();
       renderizarTodo();
     });
   </script>
