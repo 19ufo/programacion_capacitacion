@@ -1415,6 +1415,96 @@
       transform: translateY(0);
       pointer-events: auto;
     }
+
+    /* Opciones dentro del modal de limpieza */
+    .clean-option-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .clean-option-card:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .clean-option-icon {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .clean-option-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .clean-option-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .clean-option-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .clean-option-card.danger-zone {
+      border-color: #fecdd3;
+      background: #fff5f5;
+    }
+
+    .clean-option-card.danger-zone:hover {
+      background: #ffe4e6;
+      border-color: #f43f5e;
+    }
+
+    .member-mini-chip .btn-del-chip {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 1px 3px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      margin-left: 3px;
+      transition: all 0.15s ease;
+    }
+
+    .member-mini-chip:hover .btn-del-chip {
+      color: #ef4444;
+    }
+
+    .member-mini-chip .btn-del-chip:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #dc2626 !important;
+      transform: scale(1.15);
+    }
+
+    .member-mini-chip.active-member .btn-del-chip {
+      color: #94a3b8;
+    }
+
+    .member-mini-chip.active-member .btn-del-chip:hover {
+      color: #fca5a5 !important;
+      background: rgba(255, 255, 255, 0.2);
+    }
   </style>
 </head>
 <body>
@@ -1472,8 +1562,8 @@
         <button class="btn-nav-action btn-excel-export" onclick="exportarAExcel()" title="Descargar reporte comparativo del equipo en Excel">
           <span>📊 Excel</span>
         </button>
-        <button class="btn-nav-action btn-reset-clean" onclick="reiniciarMarcaciones()" title="Limpiar los días marcados de la propuesta actual">
-          <span>🧹 Limpiar</span>
+        <button class="btn-nav-action btn-reset-clean" onclick="abrirModalLimpieza()" title="Opciones para limpiar marcas o borrar integrantes">
+          <span>🧹 Limpiar / Borrar</span>
         </button>
       </div>
     </header>
@@ -1648,6 +1738,69 @@
       <div class="modal-actions-row">
         <button class="btn-modal-cancel" onclick="cerrarModalCapacitacion()">Cancelar</button>
         <button class="btn-modal-save" onclick="guardarCapacitacionModal()">Guardar en Calendario</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GESTIÓN DE LIMPIEZA Y BORRADO DE INTEGRANTES -->
+  <div id="modalLimpieza" class="modal-backdrop">
+    <div class="modal-card-box" style="max-width: 490px;">
+      <div class="modal-header-line">
+        <h3><span>🧹 Opciones de Limpieza y Borrado</span></h3>
+        <button class="btn-close-modal" onclick="cerrarModalLimpieza()">✕</button>
+      </div>
+
+      <div class="modal-body-form" style="display: flex; flex-direction: column; gap: 11px;">
+        <p style="font-size: 12.5px; color: #64748b; margin-bottom: 2px;">
+          Selecciona la acción que deseas realizar en el calendario y en la nube:
+        </p>
+
+        <!-- Opción 1: Limpiar solo mis días -->
+        <div class="clean-option-card" onclick="limpiarMisMarcaciones()">
+          <div class="clean-option-icon">👤</div>
+          <div class="clean-option-info">
+            <div class="clean-option-title">Limpiar mis días marcados</div>
+            <div class="clean-option-desc">Borra tus días de teletrabajo/bloqueo, pero mantiene tu nombre en el equipo.</div>
+          </div>
+        </div>
+
+        <!-- Opción 2: Limpiar marcas de todo el equipo -->
+        <div class="clean-option-card" onclick="limpiarMarcacionesTodoEquipo()">
+          <div class="clean-option-icon">👥</div>
+          <div class="clean-option-info">
+            <div class="clean-option-title">Limpiar marcas de TODO el equipo</div>
+            <div class="clean-option-desc">Pone el calendario en blanco para todos, conservando los integrantes registrados.</div>
+          </div>
+        </div>
+
+        <!-- Opción 3: Eliminar un integrante específico -->
+        <div class="clean-option-card" onclick="alternarSubmenuEliminarIntegrante()">
+          <div class="clean-option-icon">🗑️</div>
+          <div class="clean-option-info">
+            <div class="clean-option-title">Eliminar un integrante específico ▾</div>
+            <div class="clean-option-desc">Elige a un integrante para borrarlo definitivamente junto con todas sus marcas.</div>
+          </div>
+        </div>
+        <div id="subseccionEliminarIntegrante" style="display: none; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 11px;">
+          <label style="font-size: 11.5px; font-weight: 700; color: #9f1239;">Selecciona a quién eliminar del equipo:</label>
+          <div style="display: flex; gap: 8px; margin-top: 6px;">
+            <select id="selectUsuarioAEliminar" class="select-dropdown-clean" style="flex: 1; border-color: #fca5a5; font-size: 12px;"></select>
+            <button class="btn-modal-save" style="background: #e11d48; padding: 6px 14px;" onclick="ejecutarEliminarIntegranteSeleccionado()">Eliminar</button>
+          </div>
+        </div>
+
+        <!-- Opción 4: Reset total de fábrica -->
+        <div class="clean-option-card danger-zone" onclick="borrarTodoElSistema()">
+          <div class="clean-option-icon">💣</div>
+          <div class="clean-option-info">
+            <div class="clean-option-title" style="color: #e11d48;">Borrar TODO (Reset de Fábrica)</div>
+            <div class="clean-option-desc">Borra todos los integrantes, propuestas y reinicia la base de datos de cero.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="btn-modal-cancel" onclick="cerrarModalLimpieza()">Cerrar</button>
       </div>
     </div>
   </div>
@@ -1911,7 +2064,10 @@
         const u = datosEquipo[uid];
         const chip = document.createElement("div");
         chip.className = "member-mini-chip" + (filtroUsuarioSeleccionado === uid ? " active-member" : "");
-        chip.textContent = u.nombre || uid;
+        chip.innerHTML = `
+          <span>${u.nombre || uid}</span>
+          <button class="btn-del-chip" onclick="event.stopPropagation(); confirmarEliminarIntegrante('${uid}')" title="Eliminar a ${u.nombre || uid} del equipo">✕</button>
+        `;
         chip.onclick = () => fijarFiltroUsuario(uid);
         chipsContainer.appendChild(chip);
       });
@@ -2287,18 +2443,144 @@
       mostrarToast(`Capacitación programada: "${tema}"`, "🟣");
     }
 
-    function reiniciarMarcaciones() {
-      let usuarioDestino = filtroUsuarioSeleccionado !== "todos" ? filtroUsuarioSeleccionado : miUsuarioId;
-      if (!usuarioDestino) return;
-
-      const nombreAfectado = (datosEquipo[usuarioDestino] && datosEquipo[usuarioDestino].nombre) || usuarioDestino;
-
-      if (confirm(`¿Deseas limpiar todos los días marcados de ${nombreAfectado}?`)) {
-        if (datosEquipo[usuarioDestino]) datosEquipo[usuarioDestino].dias = {};
-        if (fbDb) fbDb.ref(`equipo/${usuarioDestino}/dias`).remove();
-        renderizarTodo();
-        mostrarToast(`Días de ${nombreAfectado} restablecidos`, "🧹");
+    /* --------------------------------------------------------------------------
+       GESTIÓN DE LIMPIEZA Y BORRADO DE INTEGRANTES
+       -------------------------------------------------------------------------- */
+    function abrirModalLimpieza() {
+      const select = document.getElementById("selectUsuarioAEliminar");
+      if (select) {
+        select.innerHTML = "";
+        const uids = Object.keys(datosEquipo);
+        if (uids.length === 0) {
+          select.innerHTML = '<option value="">(No hay integrantes registrados)</option>';
+        } else {
+          uids.forEach(uid => {
+            const opt = document.createElement("option");
+            opt.value = uid;
+            opt.textContent = `${datosEquipo[uid].nombre || uid} (${uid})`;
+            select.appendChild(opt);
+          });
+        }
       }
+      const sub = document.getElementById("subseccionEliminarIntegrante");
+      if (sub) sub.style.display = "none";
+
+      const modal = document.getElementById("modalLimpieza");
+      if (modal) modal.classList.add("open");
+    }
+
+    function cerrarModalLimpieza() {
+      const modal = document.getElementById("modalLimpieza");
+      if (modal) modal.classList.remove("open");
+    }
+
+    function alternarSubmenuEliminarIntegrante() {
+      const sub = document.getElementById("subseccionEliminarIntegrante");
+      if (sub) {
+        sub.style.display = sub.style.display === "none" ? "block" : "none";
+      }
+    }
+
+    function limpiarMisMarcaciones() {
+      const uid = miUsuarioId;
+      if (!uid || !datosEquipo[uid]) {
+        alert("Primero selecciona o escribe tu nombre para saber de quién limpiar los días.");
+        return;
+      }
+      const nombre = datosEquipo[uid].nombre || uid;
+      if (confirm(`¿Deseas limpiar todos los días marcados de "${nombre}"?\n\nTu usuario se mantendrá registrado en el equipo, solo se vaciarán tus días de teletrabajo/bloqueo.`)) {
+        datosEquipo[uid].dias = {};
+        if (fbDb) fbDb.ref(`equipo/${uid}/dias`).remove();
+        cerrarModalLimpieza();
+        renderizarTodo();
+        mostrarToast(`Días de ${nombre} restablecidos`, "🧹");
+      }
+    }
+
+    function limpiarMarcacionesTodoEquipo() {
+      const totalIntegrantes = Object.keys(datosEquipo).length;
+      if (totalIntegrantes === 0) {
+        alert("No hay integrantes registrados en el equipo.");
+        return;
+      }
+      if (confirm(`¿Deseas limpiar las marcaciones de TODOS los ${totalIntegrantes} integrantes?\n\nLos nombres de las personas se conservarán en el equipo, pero el calendario quedará en blanco para todos.`)) {
+        Object.keys(datosEquipo).forEach(uid => {
+          datosEquipo[uid].dias = {};
+          if (fbDb) fbDb.ref(`equipo/${uid}/dias`).remove();
+        });
+        cerrarModalLimpieza();
+        renderizarTodo();
+        mostrarToast("Se limpiaron las marcaciones de todo el equipo", "👥");
+      }
+    }
+
+    function confirmarEliminarIntegrante(uid) {
+      if (!uid || !datosEquipo[uid]) return;
+      const nombre = datosEquipo[uid].nombre || uid;
+      if (confirm(`¿Estás seguro de ELIMINAR a "${nombre}" del equipo?\n\nEsta acción borrará a este integrante y todas sus marcaciones tanto en tu pantalla como en Firebase de forma definitiva.`)) {
+        eliminarIntegrante(uid);
+      }
+    }
+
+    function eliminarIntegrante(uid) {
+      const nombre = (datosEquipo[uid] && datosEquipo[uid].nombre) || uid;
+      delete datosEquipo[uid];
+      if (fbDb) fbDb.ref(`equipo/${uid}`).remove();
+
+      if (miUsuarioId === uid) {
+        miUsuarioId = "";
+        miUsuarioNombre = "";
+        localStorage.removeItem("cal_mi_usuario_id");
+        localStorage.removeItem("cal_mi_usuario_nombre");
+        actualizarEtiquetaMiNombre();
+      }
+
+      if (filtroUsuarioSeleccionado === uid) {
+        filtroUsuarioSeleccionado = "todos";
+      }
+
+      actualizarSelectoresDeUsuarios();
+      renderizarTodo();
+      cerrarModalLimpieza();
+      mostrarToast(`Integrante "${nombre}" eliminado del equipo`, "🗑️");
+    }
+
+    function ejecutarEliminarIntegranteSeleccionado() {
+      const select = document.getElementById("selectUsuarioAEliminar");
+      const uid = select ? select.value : "";
+      if (!uid) {
+        alert("Por favor selecciona un integrante de la lista.");
+        return;
+      }
+      confirmarEliminarIntegrante(uid);
+    }
+
+    function borrarTodoElSistema() {
+      const confirmacion1 = confirm("⚠️ ATENCIÓN: ¿Deseas BORRAR TODO el equipo, todas las propuestas y reiniciar el calendario por completo?");
+      if (!confirmacion1) return;
+
+      const confirmacion2 = confirm("¿Estás 100% seguro? Esta acción borrará a TODOS los integrantes en Firebase y en pantalla. No se puede deshacer.");
+      if (!confirmacion2) return;
+
+      datosEquipo = {};
+      if (fbDb) fbDb.ref("equipo").remove();
+
+      miUsuarioId = "";
+      miUsuarioNombre = "";
+      localStorage.removeItem("cal_mi_usuario_id");
+      localStorage.removeItem("cal_mi_usuario_nombre");
+      filtroUsuarioSeleccionado = "todos";
+
+      actualizarEtiquetaMiNombre();
+      actualizarSelectoresDeUsuarios();
+      renderizarTodo();
+      cerrarModalLimpieza();
+      mostrarToast("¡Todo el equipo y la base de datos han sido reiniciados!", "💣");
+    }
+
+    // Alias para compatibilidad
+    function reiniciarMarcaciones() {
+      abrirModalLimpieza();
     }
 
     /* --------------------------------------------------------------------------
