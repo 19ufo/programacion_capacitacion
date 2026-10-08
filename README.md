@@ -71,4 +71,4 @@ Para que cualquier persona en el mundo pueda ver tu calendario en internet grati
 ---
 
 ## 📄 Licencia
-Este proyecto es de libre uso para gestión de equipos y personal en Colombia.
+Este proyecto es solo un demo apra uso personal, no comerciable.
